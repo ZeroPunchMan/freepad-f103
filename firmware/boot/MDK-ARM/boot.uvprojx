@@ -206,7 +206,7 @@
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
             <Ir1Chk>1</Ir1Chk>
-            <Ir2Chk>1</Ir2Chk>
+            <Ir2Chk>0</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../USB_DEVICE/App;../USB_DEVICE/Target;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../USB_DEVICE/App;../USB_DEVICE/Target;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\..\common\clib\inc;..\..\common\mmlib\inc;..\Application</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -597,6 +597,51 @@
               <FileName>usbd_cdc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>clib</GroupName>
+          <Files>
+            <File>
+              <FileName>cl_event_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_event_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>cl_fsm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_fsm.c</FilePath>
+            </File>
+            <File>
+              <FileName>cl_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_list.c</FilePath>
+            </File>
+            <File>
+              <FileName>cl_pool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_pool.c</FilePath>
+            </File>
+            <File>
+              <FileName>cl_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>cl_serialize.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\clib\src\cl_serialize.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>mmlib</GroupName>
+          <Files>
+            <File>
+              <FileName>systime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\mmlib\src\systime.c</FilePath>
             </File>
           </Files>
         </Group>

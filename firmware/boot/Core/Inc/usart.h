@@ -39,7 +39,10 @@ CL_QUEUE_DECL(usart1SendQueue);
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+static inline CL_Result_t Usart1_PollSendByte(volatile uint8_t* out)
+{
+    return CL_QueuePoll(&usart1SendQueue, (void *)out);
+}
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

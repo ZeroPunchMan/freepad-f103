@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usart.h"
+#include "systime.h"
 /* USER CODE END Includes */
 
 /* External functions --------------------------------------------------------*/
@@ -191,7 +192,7 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  SysTimeInc(1);
   /* USER CODE END SysTick_IRQn 1 */
 }
 
