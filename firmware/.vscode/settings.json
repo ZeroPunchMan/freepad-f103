@@ -13,6 +13,8 @@
         "common/clib/Makefile":true,
     },
     "files.associations": {
-        "cl_queue.h": "c"
+        "cl_queue.h": "c",
+        "systime.h": "c",
+        "cl_common.h": "c"
     }
 }

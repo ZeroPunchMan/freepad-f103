@@ -3,3 +3,6 @@ DebugConfig
 RTE
 *.uvguix.*
 *.lst
+JLinkLog.txt
+JLinkSettings.ini
+*.scvd

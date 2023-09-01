@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/common/mmlib/inc"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",
