@@ -1,0 +1,5 @@
+boot
+DebugConfig
+RTE
+*.uvguix.*
+*.lst
