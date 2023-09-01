@@ -73,11 +73,35 @@ void MX_USART1_UART_Init(void)
   LL_USART_ConfigAsyncMode(USART1);
   LL_USART_Enable(USART1);
   /* USER CODE BEGIN USART1_Init 2 */
-
+  // LL_USART_EnableIT_TXE(USART1);
   /* USER CODE END USART1_Init 2 */
 
 }
 
 /* USER CODE BEGIN 1 */
+#include "stdio.h"
+#pragma import(__use_no_semihosting)
+
+CL_QUEUE_DEF_INIT(usart1SendQueue, 1024, uint8_t, );
+
+struct __FILE
+{
+    int handle;
+};
+
+FILE __stdout;
+
+void _sys_exit(int x)
+{
+    x = x;
+}
+
+int fputc(int ch, FILE *f)
+{
+    uint8_t data = ch;
+    CL_QueueAdd(&usart1SendQueue, &data);
+    LL_USART_EnableIT_TXE(USART1);
+    return ch;
+}
 
 /* USER CODE END 1 */

@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "common/clib/.vscode":true,
+        "common/clib/mcu_testcase":true,
+        "common/clib/testcase":true,
+        "common/clib/.gitignore":true,
+        "common/clib/Makefile":true,
+    },
+    "files.associations": {
+        "cl_queue.h": "c"
+    }
+}

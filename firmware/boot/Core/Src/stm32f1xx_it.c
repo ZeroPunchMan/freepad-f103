@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* External functions --------------------------------------------------------*/
@@ -224,7 +225,14 @@ void USART1_IRQHandler(void)
 
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
-
+  volatile uint8_t data;
+  if (LL_USART_IsActiveFlag_TXE(USART1))
+  {
+    if(Usart1_PollSendByte(&data) == CL_ResSuccess)
+      LL_USART_TransmitData8(USART1, data);
+    else
+      LL_USART_DisableIT_TXE(USART1);
+  }
   /* USER CODE END USART1_IRQn 1 */
 }
 

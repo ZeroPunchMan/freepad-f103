@@ -29,11 +29,11 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "cl_queue.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
-
+CL_QUEUE_DECL(usart1SendQueue);
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
