@@ -1,3 +1,6 @@
 [submodule "firmware/common/clib"]
 	path = firmware/common/clib
 	url = https://github.com/ZeroPunchMan/clib.git
+[submodule "firmware/common/mmlib"]
+	path = firmware/common/mmlib
+	url = https://github.com/ZeroPunchMan/mmlib.git
