@@ -11,6 +11,7 @@
         "common/clib/testcase":true,
         "common/clib/.gitignore":true,
         "common/clib/Makefile":true,
+        "common/mmlib/testcase":true,
     },
     "files.associations": {
         "cl_queue.h": "c",
