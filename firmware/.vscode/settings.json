@@ -15,6 +15,12 @@
     "files.associations": {
         "cl_queue.h": "c",
         "systime.h": "c",
-        "cl_common.h": "c"
+        "cl_common.h": "c",
+        "mmlib_config.h": "c",
+        "main.h": "c",
+        "stm32f1xx_hal.h": "c",
+        "stm32f1xx_hal_conf.h": "c",
+        "stm32f1xx_hal_cortex.h": "c",
+        "stm32f1xx_hal_def.h": "c"
     }
 }

@@ -4,7 +4,7 @@
 #include "systime.h"
 #include "crc.h"
 #include "mmlib_config.h"
-#include "stm32f1xx_hal_flash.h"
+#include "main.h"
 
 void jump_to_addr(uint32_t new_msp, uint32_t addr)
 {
@@ -53,7 +53,7 @@ bool IsAppValid(void)
 
     uint32_t hash = Ethernet_CRC32((const uint8_t *)APP_START_ADDR, pInfo->size);
 
-    CL_LOG("check app, size: %lu, calc %lx, save: %lx", pInfo->size, hash, pInfo->hash);
+    CL_LOG("check app, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
     return hash == pInfo->hash;
 }
 
@@ -65,7 +65,7 @@ bool IsDfuBakValid(void)
 
     uint32_t hash = Ethernet_CRC32((const uint8_t *)DFU_BAK_START_ADDR, pInfo->size);
 
-    CL_LOG("check bak, size: %lu, calc %lx, save: %lx", pInfo->size, hash, pInfo->hash);
+    CL_LOG("check bak, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
     return hash == pInfo->hash;
 }
 

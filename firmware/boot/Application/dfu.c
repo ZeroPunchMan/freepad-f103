@@ -10,6 +10,7 @@
 #include "cl_serialize.h"
 #include "crc.h"
 #include "string.h"
+#include "main.h"
 
 extern const FirmwareInfo_t bootFwInfo;
 
@@ -140,7 +141,7 @@ void Dfu_Process(void)
         break;
     case DfuStatus_Jump:
         UnmarkDfu();
-        // NVIC_SystemReset();
+        NVIC_SystemReset();
         break;
     case DfuStatus_Error:
         ToCheckApp();
