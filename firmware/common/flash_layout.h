@@ -1,7 +1,7 @@
 #pragma once
 
-#define BOOT_MAX_SIZE (30 * 1024ul)
-#define APP_MAX_SIZE (48 * 1024ul)
+#define BOOT_MAX_SIZE (70 * 1024ul)
+#define APP_MAX_SIZE (57 * 1024ul)
 
 #define BOOT_START_ADDR (0x08000000UL)
 #define APP_START_ADDR (BOOT_START_ADDR + BOOT_MAX_SIZE)
