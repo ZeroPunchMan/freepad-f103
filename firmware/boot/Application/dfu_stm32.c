@@ -29,11 +29,6 @@ CL_Result_t EraseAppSection(void)
     return EraseFlash(APP_START_ADDR, APP_MAX_SIZE / FLASH_PAGE_SIZE);
 }
 
-CL_Result_t EraseBakSection(void)
-{
-    return EraseFlash(DFU_BAK_START_ADDR, APP_MAX_SIZE / FLASH_PAGE_SIZE);
-}
-
 CL_Result_t SaveAppInfo(uint32_t addr, uint32_t size)
 {
     AppInfo_t info;
@@ -54,18 +49,6 @@ bool IsAppValid(void)
     uint32_t hash = Ethernet_CRC32((const uint8_t *)APP_START_ADDR, pInfo->size);
 
     CL_LOG("check app, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
-    return hash == pInfo->hash;
-}
-
-bool IsDfuBakValid(void)
-{
-    const AppInfo_t *pInfo = (const AppInfo_t *)DFU_APP_INFO_ADDR;
-    if (pInfo->size > APP_MAX_SIZE)
-        return false;
-
-    uint32_t hash = Ethernet_CRC32((const uint8_t *)DFU_BAK_START_ADDR, pInfo->size);
-
-    CL_LOG("check bak, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
     return hash == pInfo->hash;
 }
 
@@ -90,20 +73,8 @@ CL_Result_t WriteFlash(uint32_t addr, const uint8_t *buff, uint32_t length)
     return CL_ResSuccess;
 }
 
-CL_Result_t CopyDfuBakToApp(void)
-{
-    const AppInfo_t *pInfo = (const AppInfo_t *)DFU_APP_INFO_ADDR;
-    if (pInfo->size > APP_MAX_SIZE)
-        return false;
-
-    EraseAppSection();
-
-    WriteFlash(APP_START_ADDR, (const uint8_t *)DFU_BAK_START_ADDR, pInfo->size);
-    return CL_ResSuccess;
-}
-
 bool NeedDfu(void)
-{
+{ //todo
 
     return false;
 }

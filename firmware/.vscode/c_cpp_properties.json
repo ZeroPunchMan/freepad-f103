@@ -4,7 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/common/mmlib/inc"
+                "${workspaceFolder}/common/mmlib/inc",
+                "${workspaceFolder}/common/clib/inc",
+                "${workspaceFolder}/boot/Crypto/include"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",

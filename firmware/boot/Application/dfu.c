@@ -11,6 +11,7 @@
 #include "crc.h"
 #include "string.h"
 #include "main.h"
+#include "sign_check.h"
 
 extern const FirmwareInfo_t bootFwInfo;
 
@@ -89,8 +90,9 @@ static void ToError(void)
 
 void Dfu_Init(void)
 {
-    CL_EventSysAddListener(OnRecvSgpMsg, CL_Event_SgpRecvMsg, 0);
+    SignCheck_Init();
 
+    CL_EventSysAddListener(OnRecvSgpMsg, CL_Event_SgpRecvMsg, 0);
     ToIdle();
 }
 
@@ -127,16 +129,8 @@ void Dfu_Process(void)
         }
         else
         {
-            if (IsDfuBakValid())
-            {
-                CL_LOG_LINE("copy bak to app");
-                CopyDfuBakToApp();
-            }
-            else
-            {
-                CL_LOG_LINE("no valid app, need dfu");
-                ToWaitReq();
-            }
+            CL_LOG_LINE("no valid app, need dfu");
+            ToWaitReq();
         }
         break;
     case DfuStatus_Jump:
@@ -198,7 +192,7 @@ void OnRecvDfuRequest(const SgpPacket_t *pack)
             return;
         }
 
-        EraseBakSection();
+        EraseAppSection();
         ToRecvFile(fileSize);
         SendDfuReady();
         SetLastCommTime();
@@ -228,7 +222,7 @@ static void OnRecvDfuData(const SgpPacket_t *pack)
                 return;
             }
 
-            CL_Result_t res = WriteFlash(DFU_BAK_START_ADDR + dfuContext.recvSize, pack->data + 2, bytesInPack);
+            CL_Result_t res = WriteFlash(APP_START_ADDR + dfuContext.recvSize, pack->data + 2, bytesInPack);
             dfuContext.recvSize += bytesInPack;
             CL_LOG_LINE("dfu pack: %hu--%hu, recv size: %u", packCount, bytesInPack, dfuContext.recvSize);
             SendDfuDataRsp(packCount, res == CL_ResSuccess ? 1 : 0);
@@ -243,14 +237,15 @@ static void OnRecvDfuData(const SgpPacket_t *pack)
     }
 }
 
-CL_Result_t VerifyDfuBak(const SgpPacket_t *pack)
+CL_Result_t VerifyApp(const SgpPacket_t *pack)
 {
     if (dfuContext.fileSize != dfuContext.recvSize)
         return CL_ResFailed;
 
-    // todo verify
+    if (pack->length != 64)
+        return CL_ResFailed;
 
-    return CL_ResSuccess;
+    return SingCheck((const uint8_t *)APP_START_ADDR, dfuContext.recvSize, (const uint8_t *)pack->data, pack->length);
 }
 
 static void OnRecvDfuVerify(const SgpPacket_t *pack)
@@ -263,12 +258,11 @@ static void OnRecvDfuVerify(const SgpPacket_t *pack)
             return;
         }
 
-        CL_Result_t res = VerifyDfuBak(pack);
+        CL_Result_t res = VerifyApp(pack);
         uint8_t rsp = 1;
         if (res == CL_ResSuccess)
         {
-            SaveAppInfo(DFU_BAK_START_ADDR, dfuContext.fileSize);
-            CopyDfuBakToApp();
+            SaveAppInfo(APP_START_ADDR, dfuContext.fileSize);
             CL_LOG_LINE("dfu verity ok");
         }
         else
@@ -305,4 +299,3 @@ static bool OnRecvSgpMsg(void *eventArg)
 
     return true;
 }
-
