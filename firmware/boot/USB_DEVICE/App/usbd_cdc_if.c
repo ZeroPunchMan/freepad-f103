@@ -297,7 +297,10 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 USBD_StatusTypeDef CDC_GetTransmitStatus(void)
 {
   USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
-  return hcdc->TxState;
+  if(hcdc->TxState == 0)
+    return USBD_OK;
+  else 
+    return USBD_BUSY;
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 

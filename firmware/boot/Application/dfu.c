@@ -140,7 +140,7 @@ void Dfu_Process(void)
         break;
     case DfuStatus_Jump:
         UnmarkDfu();
-        NVIC_SystemReset();
+        // NVIC_SystemReset();
         break;
     case DfuStatus_Error:
         ToCheckApp();
@@ -229,7 +229,7 @@ static void OnRecvDfuData(const SgpPacket_t *pack)
 
             CL_Result_t res = WriteFlash(DFU_BAK_START_ADDR + dfuContext.recvSize, pack->data + 2, bytesInPack);
             dfuContext.recvSize += bytesInPack;
-            CL_LOG_LINE("dfu pack: %u--%u, recv size: %lu", packCount, bytesInPack, dfuContext.recvSize);
+            CL_LOG_LINE("dfu pack: %hu--%hu, recv size: %u", packCount, bytesInPack, dfuContext.recvSize);
             SendDfuDataRsp(packCount, res == CL_ResSuccess ? 1 : 0);
             SetLastCommTime();
         }

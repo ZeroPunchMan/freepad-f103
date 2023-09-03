@@ -26,7 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include "systime.h"
 #include "cl_log.h"
-// #include "dfu.h"
+#include "dfu.h"
 #include "comm.h"
 #include "cl_event_system.h"
 /* USER CODE END Includes */
@@ -70,6 +70,12 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  if (!NeedDfu())
+  {
+    if (IsAppValid())
+        JumpToApp();
+  }
+
   CL_EventSysInit();
   /* USER CODE END 1 */
 
@@ -95,7 +101,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   Comm_Init();
-  // Dfu_Init();
+  Dfu_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,7 +110,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
     Comm_Process();
-    // Dfu_Process();
+    Dfu_Process();
 
     static uint32_t lastTime = 0;
     if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
