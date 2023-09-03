@@ -74,7 +74,11 @@ CL_Result_t WriteFlash(uint32_t addr, const uint8_t *buff, uint32_t length)
 }
 
 bool NeedDfu(void)
-{ //todo
+{
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
+    Mmhl_GpioInit(GPIOB, LL_GPIO_PIN_9, LL_GPIO_MODE_INPUT);
+    if (Mmhl_GpioReadInput(GPIOB, LL_GPIO_PIN_9) == 0)
+        return true;
 
     return false;
 }

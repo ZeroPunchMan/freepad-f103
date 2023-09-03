@@ -1,4 +1,5 @@
 #include "cl_common.h"
+#include "stm32f1_gpio_abs.h"
 
 typedef enum
 {
