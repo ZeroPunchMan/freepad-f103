@@ -80,14 +80,9 @@ void MX_USART1_UART_Init(void)
 
 /* USER CODE BEGIN 1 */
 #include "stdio.h"
-#pragma import(__use_no_semihosting)
 
 CL_QUEUE_DEF_INIT(usart1SendQueue, 1024, uint8_t, );
 
-struct __FILE
-{
-    int handle;
-};
 
 FILE __stdout;
 

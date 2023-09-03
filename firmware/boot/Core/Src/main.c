@@ -26,6 +26,9 @@
 /* USER CODE BEGIN Includes */
 #include "systime.h"
 #include "cl_log.h"
+// #include "dfu.h"
+#include "comm.h"
+#include "cl_event_system.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +70,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  CL_EventSysInit();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -91,7 +94,8 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  Comm_Init();
+  // Dfu_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,11 +103,14 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    Comm_Process();
+    // Dfu_Process();
+
     static uint32_t lastTime = 0;
     if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
     {
       lastTime = GetSysTime();
-      CL_LOG_LINE("%us", lastTime / 1000);
+      // CL_LOG_LINE("%us", lastTime / 1000);
     }
     /* USER CODE BEGIN 3 */
   }
