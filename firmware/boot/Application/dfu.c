@@ -10,8 +10,13 @@
 #include "cl_serialize.h"
 #include "crc.h"
 #include "string.h"
-#include "main.h"
+#include "board.h"
 #include "sign_check.h"
+
+static inline void ToggleLed(void)
+{
+    LL_GPIO_TogglePin(STA_LED_PROT, STA_LED_PIN);
+}
 
 extern const FirmwareInfo_t bootFwInfo;
 
@@ -114,7 +119,16 @@ void Dfu_Process(void)
         }
         break;
     case DfuStatus_WaitReq:
-        break;
+    {
+        static uint32_t lastTime = 0;
+        if(SysTimeSpan(lastTime) >= 1000)
+        {
+            lastTime = GetSysTime();
+
+            ToggleLed();
+        }
+    }
+    break;
     case DfuStatus_RecvFile:
         if (IsCommTimeout())
         {
@@ -224,6 +238,7 @@ static void OnRecvDfuData(const SgpPacket_t *pack)
                 return;
             }
 
+            ToggleLed();
             CL_Result_t res = WriteFlash(APP_START_ADDR + dfuContext.recvSize, pack->data + 2, bytesInPack);
             dfuContext.recvSize += bytesInPack;
             CL_LOG_LINE("dfu pack: %hu--%hu, recv size: %u", packCount, bytesInPack, dfuContext.recvSize);

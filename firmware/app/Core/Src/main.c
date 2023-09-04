@@ -103,7 +103,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
    static uint32_t lastTime = 0;
-   if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
+   if (SysTimeSpan(lastTime) >= 500)
    {
      lastTime = GetSysTime();
      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);

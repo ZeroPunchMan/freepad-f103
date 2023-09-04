@@ -88,13 +88,11 @@ int main(void)
   /* USER CODE BEGIN 1 */
   if (!NeedDfu())
   {
-    JumpToApp();
-
-    // if (IsAppValid())
-    // {
-    //     HAL_FLASH_Lock();
-    //     JumpToApp();
-    // }
+    if (IsAppValid())
+    {
+        HAL_FLASH_Lock();
+        JumpToApp();
+    }
   }
   CL_EventSysInit();
   /* USER CODE END 1 */
