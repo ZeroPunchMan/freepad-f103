@@ -75,6 +75,7 @@ static void UsbFakePlug(void)
   HAL_Delay(100);
   LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_12);
 }
+void SendHidTestReport(void);
 /* USER CODE END 0 */
 
 /**
@@ -124,6 +125,8 @@ int main(void)
      lastTime = GetSysTime();
      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
      CL_LOG_LINE("app2: %us", lastTime / 1000);
+
+     SendHidTestReport();
    }
   }
   /* USER CODE END 3 */

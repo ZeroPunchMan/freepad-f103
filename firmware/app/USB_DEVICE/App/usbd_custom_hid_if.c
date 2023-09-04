@@ -359,6 +359,38 @@ void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
 	buff[14] = report->button[1];
 	buff[15] = report->reserved;
 }
+
+
+static XosHidReport_t xosReport = 
+{
+	.leftX = UINT16_MAX / 2, //max 65535
+	.leftY = UINT16_MAX / 2,
+
+	.rightX = UINT16_MAX / 2,
+	.rightY = UINT16_MAX / 2,
+
+	.leftTrigger = 0, //max 0x3ff
+	.rightTrigger = 0,
+
+	.dPad = 0, //1~8
+	.button[0] = 0,
+	.button[1] = 0,
+	.reserved = 0,
+};
+
+void SendHidTestReport(void)
+{
+  static uint8_t inputReportData[17] = {0};
+  inputReportData[0] = 1;
+
+  XosHidReportSerialize(inputReportData + 1, &xosReport);
+  if (xosReport.button[0])
+    xosReport.button[0] = 0;
+  else
+    xosReport.button[0] = 0x08;
+
+  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, inputReportData, sizeof(inputReportData));
+}
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 /**
  * @}
