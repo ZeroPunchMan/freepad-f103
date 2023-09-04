@@ -89,8 +89,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USB_DEVICE_Init();
   MX_USART1_UART_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -102,12 +102,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
-    {
-      lastTime = GetSysTime();
-      CL_LOG_LINE("%us", lastTime / 1000);
-    }
+   static uint32_t lastTime = 0;
+   if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
+   {
+     lastTime = GetSysTime();
+     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+     CL_LOG_LINE("app2: %us", lastTime / 1000);
+   }
   }
   /* USER CODE END 3 */
 }

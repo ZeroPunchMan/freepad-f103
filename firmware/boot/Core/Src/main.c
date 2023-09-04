@@ -88,8 +88,13 @@ int main(void)
   /* USER CODE BEGIN 1 */
   if (!NeedDfu())
   {
-    if (IsAppValid())
-        JumpToApp();
+    JumpToApp();
+
+    // if (IsAppValid())
+    // {
+    //     HAL_FLASH_Lock();
+    //     JumpToApp();
+    // }
   }
   CL_EventSysInit();
   /* USER CODE END 1 */
@@ -134,7 +139,7 @@ int main(void)
     {
       lastTime = GetSysTime();
       // CL_LOG_LINE("%us", lastTime / 1000);
-      CL_LOG_LINE("pb9: %d", LL_GPIO_IsInputPinSet(GPIOB, LL_GPIO_PIN_9));
+      CL_LOG_LINE("btn: %d", LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_15));
     }
   }
   /* USER CODE END 3 */

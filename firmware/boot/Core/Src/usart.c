@@ -83,8 +83,8 @@ void MX_USART1_UART_Init(void)
 
 CL_QUEUE_DEF_INIT(usart1SendQueue, 1024, uint8_t, );
 
-
 FILE __stdout;
+
 
 void _sys_exit(int x)
 {

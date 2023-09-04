@@ -80,6 +80,7 @@ static void ToCheckApp(void)
 static void ToJump(void)
 {
     dfuContext.status = DfuStatus_Jump;
+    HAL_FLASH_Lock();
 }
 
 static void ToError(void)
@@ -135,6 +136,7 @@ void Dfu_Process(void)
         break;
     case DfuStatus_Jump:
         UnmarkDfu();
+        DelayOnSysTime(100);
         NVIC_SystemReset();
         break;
     case DfuStatus_Error:
@@ -191,7 +193,7 @@ void OnRecvDfuRequest(const SgpPacket_t *pack)
             CL_LOG_LINE("dfu file length error");
             return;
         }
-
+        HAL_FLASH_Unlock();
         EraseAppSection();
         ToRecvFile(fileSize);
         SendDfuReady();
