@@ -62,11 +62,11 @@
   * @{
   */
 
-#define USBD_VID     2333
+#define USBD_VID     1155
 #define USBD_LANGID_STRING     1033
-#define USBD_MANUFACTURER_STRING     "freepad"
-#define USBD_PID_FS     1234
-#define USBD_PRODUCT_STRING_FS     "STM32 Virtual ComPort"
+#define USBD_MANUFACTURER_STRING     "Lyj"
+#define USBD_PID_FS     22222
+#define USBD_PRODUCT_STRING_FS     "FreePad Boot"
 #define USBD_CONFIGURATION_STRING_FS     "CDC Config"
 #define USBD_INTERFACE_STRING_FS     "CDC Interface"
 
