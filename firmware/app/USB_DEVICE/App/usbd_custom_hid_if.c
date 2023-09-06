@@ -258,7 +258,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static int8_t CUSTOM_HID_Init_FS(void);
 static int8_t CUSTOM_HID_DeInit_FS(void);
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t *report);
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t *report, uint16_t len);
 
 /**
  * @}
@@ -306,7 +306,7 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
  * @param  state: Event state
  * @retval USBD_OK if all operations are OK else USBD_FAIL
  */
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t *report)
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t *report, uint16_t len)
 {
   /* USER CODE BEGIN 6 */
   return (USBD_OK);
@@ -384,10 +384,10 @@ void SendHidTestReport(void)
   inputReportData[0] = 1;
 
   XosHidReportSerialize(inputReportData + 1, &xosReport);
-  if (xosReport.button[0])
-    xosReport.button[0] = 0;
-  else
-    xosReport.button[0] = 0x08;
+  // if (xosReport.button[0])
+  //   xosReport.button[0] = 0;
+  // else
+  //   xosReport.button[0] = 0x08;
 
   if (xosReport.leftTrigger)
     xosReport.leftTrigger = 0;

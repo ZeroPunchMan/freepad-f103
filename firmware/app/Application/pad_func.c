@@ -4,6 +4,7 @@
 #include "string.h"
 #include "flash_layout.h"
 #include "iflash_stm32.h"
+#include "cl_log.h"
 
 typedef struct
 {
@@ -39,3 +40,4 @@ void PadFunc_Init(void)
 void PadFunc_Process(void)
 {
 }
+

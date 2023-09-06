@@ -52,7 +52,7 @@ bool IsAppValid(void)
 
     uint32_t hash = Ethernet_CRC32((const uint8_t *)APP_START_ADDR, pInfo->size);
 
-    CL_LOG("check app, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
+    CL_LOG_LINE("check app, size: %u, calc %x, save: %x", pInfo->size, hash, pInfo->hash);
     return hash == pInfo->hash;
 }
 
