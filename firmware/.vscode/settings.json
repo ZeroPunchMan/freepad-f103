@@ -27,6 +27,7 @@
         "stm32f1xx_hal_def.h": "c",
         "signal.h": "c",
         "stdio.h": "c",
-        "cl_event_system.h": "c"
+        "cl_event_system.h": "c",
+        "iflash_stm32.h": "c"
     }
 }

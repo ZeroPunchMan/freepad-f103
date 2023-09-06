@@ -1,9 +1,11 @@
 #pragma once
+#include "main.h"
 
-#define BOOT_MAX_SIZE (70 * 1024ul)
-#define APP_MAX_SIZE (57 * 1024ul)
+#define BOOT_MAX_SIZE (68 * 1024ul)
+#define APP_MAX_SIZE (58 * 1024ul)
 
 #define BOOT_START_ADDR (0x08000000UL)
 #define APP_START_ADDR (BOOT_START_ADDR + BOOT_MAX_SIZE)
 
 #define DFU_APP_INFO_ADDR (APP_START_ADDR + APP_MAX_SIZE)
+#define PAD_PARAM_ADDR (DFU_APP_INFO_ADDR + FLASH_PAGE_SIZE)

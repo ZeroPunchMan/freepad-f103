@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/common/mmlib/inc",
                 "${workspaceFolder}/common/clib/inc",
-                "${workspaceFolder}/boot/Crypto/include"
+                "${workspaceFolder}/boot/Crypto/include",
+                "${workspaceFolder}/app/Core/Inc"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",

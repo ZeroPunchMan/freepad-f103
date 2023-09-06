@@ -658,6 +658,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\common\mmlib\src\sgp_protocol.c</FilePath>
             </File>
+            <File>
+              <FileName>iflash_stm32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\mmlib\src\iflash_stm32.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

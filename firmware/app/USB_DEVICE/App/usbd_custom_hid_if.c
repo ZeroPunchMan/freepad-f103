@@ -100,7 +100,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
         0x09, 0x30,                   //--function:leftX     Usage (X)
         0x09, 0x31,                   //--function:leftY     Usage (Y)
         0x15, 0x00,                   //     Logical Minimum (0)
-        0x27, 0xFF, 0xFF, 0x00, 0x00, //     Logical Maximum (65534)
+        0x27, 0xFF, 0xFF, 0x00, 0x00, //     Logical Maximum (65535)
         0x95, 0x02,                   //     Report Count (2)
         0x75, 0x10,                   //     Report Size (16)
         0x81, 0x02,                   //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
@@ -110,7 +110,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
         0x09, 0x32,                   //--function:rightX     Usage (Z)
         0x09, 0x35,                   //--function:rightY     Usage (Rz)
         0x15, 0x00,                   //     Logical Minimum (0)
-        0x27, 0xFF, 0xFF, 0x00, 0x00, //     Logical Maximum (65534)
+        0x27, 0xFF, 0xFF, 0x00, 0x00, //     Logical Maximum (65535)
         0x95, 0x02,                   //     Report Count (2)
         0x75, 0x10,                   //     Report Size (16)
         0x81, 0x02,                   //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
@@ -363,14 +363,14 @@ void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
 
 static XosHidReport_t xosReport = 
 {
-	.leftX = UINT16_MAX / 2, //max 65535
-	.leftY = UINT16_MAX / 2,
+	.leftX = UINT16_MAX, //max 65535
+	.leftY = UINT16_MAX,
 
 	.rightX = UINT16_MAX / 2,
 	.rightY = UINT16_MAX / 2,
 
-	.leftTrigger = 0, //max 0x3ff
-	.rightTrigger = 0,
+	.leftTrigger = 0x3ff, //max 0x3ff
+	.rightTrigger = 0x3ff,
 
 	.dPad = 0, //1~8
 	.button[0] = 0,
@@ -388,6 +388,16 @@ void SendHidTestReport(void)
     xosReport.button[0] = 0;
   else
     xosReport.button[0] = 0x08;
+
+  if (xosReport.leftTrigger)
+    xosReport.leftTrigger = 0;
+  else
+    xosReport.leftTrigger = 0x3ff;
+
+  if (xosReport.rightTrigger)
+    xosReport.rightTrigger = 0;
+  else
+    xosReport.rightTrigger = 0x3ff;
 
   USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, inputReportData, sizeof(inputReportData));
 }
