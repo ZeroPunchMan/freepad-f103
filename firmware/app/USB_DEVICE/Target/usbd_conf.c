@@ -77,7 +77,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
     __HAL_RCC_USB_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
     if(pcdHandle->Init.low_power_enable == 1)
     {
@@ -85,7 +85,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
       __HAL_USB_WAKEUP_EXTI_CLEAR_FLAG();
       __HAL_USB_WAKEUP_EXTI_ENABLE_RISING_EDGE();
       __HAL_USB_WAKEUP_EXTI_ENABLE_IT();
-      HAL_NVIC_SetPriority(USBWakeUp_IRQn, 0, 0);
+      HAL_NVIC_SetPriority(USBWakeUp_IRQn, 1, 0);
       HAL_NVIC_EnableIRQ(USBWakeUp_IRQn);
     }
   /* USER CODE BEGIN USB_MspInit 1 */
