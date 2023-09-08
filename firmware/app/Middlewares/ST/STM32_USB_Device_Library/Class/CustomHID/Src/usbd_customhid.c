@@ -126,9 +126,9 @@ USBD_ClassTypeDef  USBD_CUSTOM_HID =
   NULL, /*SOF */
   NULL,
   NULL,
-  USBD_CUSTOM_HID_GetHSCfgDesc,
+  NULL,
   USBD_CUSTOM_HID_GetFSCfgDesc,
-  USBD_CUSTOM_HID_GetOtherSpeedCfgDesc,
+  NULL,
   USBD_CUSTOM_HID_GetDeviceQualifierDesc,
 };
 
@@ -167,8 +167,8 @@ __ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_CfgFSDesc[USB_CUSTOM_HID_CONFIG_DES
   0x00,         /*bCountryCode: Hardware target country*/
   0x01,         /*bNumDescriptors: Number of CUSTOM_HID class descriptors to follow*/
   0x22,         /*bDescriptorType*/
-  USBD_CUSTOM_HID_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
-  0x00,
+  USBD_CUSTOM_HID_REPORT_DESC_SIZE & 0xff,/*wItemLength: Total length of Report descriptor*/
+  USBD_CUSTOM_HID_REPORT_DESC_SIZE >> 8,
   /******************** Descriptor of Custom HID endpoints ********************/
   /* 27 */
   0x07,          /*bLength: Endpoint Descriptor size*/
@@ -176,7 +176,7 @@ __ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_CfgFSDesc[USB_CUSTOM_HID_CONFIG_DES
 
   CUSTOM_HID_EPIN_ADDR,     /*bEndpointAddress: Endpoint Address (IN)*/
   0x03,          /*bmAttributes: Interrupt endpoint*/
-  CUSTOM_HID_EPIN_SIZE, /*wMaxPacketSize: 2 Byte max */
+  CUSTOM_HID_EPIN_SIZE, /*wMaxPacketSize: 16 Byte max */
   0x00,
   CUSTOM_HID_FS_BINTERVAL,          /*bInterval: Polling Interval */
   /* 34 */
@@ -185,125 +185,7 @@ __ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_CfgFSDesc[USB_CUSTOM_HID_CONFIG_DES
   USB_DESC_TYPE_ENDPOINT, /* bDescriptorType: */
   CUSTOM_HID_EPOUT_ADDR,  /*bEndpointAddress: Endpoint Address (OUT)*/
   0x03, /* bmAttributes: Interrupt endpoint */
-  CUSTOM_HID_EPOUT_SIZE,  /* wMaxPacketSize: 2 Bytes max  */
-  0x00,
-  CUSTOM_HID_FS_BINTERVAL,  /* bInterval: Polling Interval */
-  /* 41 */
-};
-
-/* USB CUSTOM_HID device HS Configuration Descriptor */
-__ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_CfgHSDesc[USB_CUSTOM_HID_CONFIG_DESC_SIZ] __ALIGN_END =
-{
-  0x09, /* bLength: Configuration Descriptor size */
-  USB_DESC_TYPE_CONFIGURATION, /* bDescriptorType: Configuration */
-  USB_CUSTOM_HID_CONFIG_DESC_SIZ,
-  /* wTotalLength: Bytes returned */
-  0x00,
-  0x01,         /*bNumInterfaces: 1 interface*/
-  0x01,         /*bConfigurationValue: Configuration value*/
-  0x00,         /*iConfiguration: Index of string descriptor describing
-  the configuration*/
-  0xC0,         /*bmAttributes: bus powered */
-  0x32,         /*MaxPower 100 mA: this current is used for detecting Vbus*/
-
-  /************** Descriptor of CUSTOM HID interface ****************/
-  /* 09 */
-  0x09,         /*bLength: Interface Descriptor size*/
-  USB_DESC_TYPE_INTERFACE,/*bDescriptorType: Interface descriptor type*/
-  0x00,         /*bInterfaceNumber: Number of Interface*/
-  0x00,         /*bAlternateSetting: Alternate setting*/
-  0x02,         /*bNumEndpoints*/
-  0x03,         /*bInterfaceClass: CUSTOM_HID*/
-  0x00,         /*bInterfaceSubClass : 1=BOOT, 0=no boot*/
-  0x00,         /*nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse*/
-  0,            /*iInterface: Index of string descriptor*/
-  /******************** Descriptor of CUSTOM_HID *************************/
-  /* 18 */
-  0x09,         /*bLength: CUSTOM_HID Descriptor size*/
-  CUSTOM_HID_DESCRIPTOR_TYPE, /*bDescriptorType: CUSTOM_HID*/
-  0x11,         /*bCUSTOM_HIDUSTOM_HID: CUSTOM_HID Class Spec release number*/
-  0x01,
-  0x00,         /*bCountryCode: Hardware target country*/
-  0x01,         /*bNumDescriptors: Number of CUSTOM_HID class descriptors to follow*/
-  0x22,         /*bDescriptorType*/
-  USBD_CUSTOM_HID_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
-  0x00,
-  /******************** Descriptor of Custom HID endpoints ********************/
-  /* 27 */
-  0x07,          /*bLength: Endpoint Descriptor size*/
-  USB_DESC_TYPE_ENDPOINT, /*bDescriptorType:*/
-
-  CUSTOM_HID_EPIN_ADDR,     /*bEndpointAddress: Endpoint Address (IN)*/
-  0x03,          /*bmAttributes: Interrupt endpoint*/
-  CUSTOM_HID_EPIN_SIZE, /*wMaxPacketSize: 2 Byte max */
-  0x00,
-  CUSTOM_HID_HS_BINTERVAL,          /*bInterval: Polling Interval */
-  /* 34 */
-
-  0x07,          /* bLength: Endpoint Descriptor size */
-  USB_DESC_TYPE_ENDPOINT, /* bDescriptorType: */
-  CUSTOM_HID_EPOUT_ADDR,  /*bEndpointAddress: Endpoint Address (OUT)*/
-  0x03, /* bmAttributes: Interrupt endpoint */
-  CUSTOM_HID_EPOUT_SIZE,  /* wMaxPacketSize: 2 Bytes max  */
-  0x00,
-  CUSTOM_HID_HS_BINTERVAL,  /* bInterval: Polling Interval */
-  /* 41 */
-};
-
-/* USB CUSTOM_HID device Other Speed Configuration Descriptor */
-__ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_OtherSpeedCfgDesc[USB_CUSTOM_HID_CONFIG_DESC_SIZ] __ALIGN_END =
-{
-  0x09, /* bLength: Configuration Descriptor size */
-  USB_DESC_TYPE_CONFIGURATION, /* bDescriptorType: Configuration */
-  USB_CUSTOM_HID_CONFIG_DESC_SIZ,
-  /* wTotalLength: Bytes returned */
-  0x00,
-  0x01,         /*bNumInterfaces: 1 interface*/
-  0x01,         /*bConfigurationValue: Configuration value*/
-  0x00,         /*iConfiguration: Index of string descriptor describing
-  the configuration*/
-  0xC0,         /*bmAttributes: bus powered */
-  0x32,         /*MaxPower 100 mA: this current is used for detecting Vbus*/
-
-  /************** Descriptor of CUSTOM HID interface ****************/
-  /* 09 */
-  0x09,         /*bLength: Interface Descriptor size*/
-  USB_DESC_TYPE_INTERFACE,/*bDescriptorType: Interface descriptor type*/
-  0x00,         /*bInterfaceNumber: Number of Interface*/
-  0x00,         /*bAlternateSetting: Alternate setting*/
-  0x02,         /*bNumEndpoints*/
-  0x03,         /*bInterfaceClass: CUSTOM_HID*/
-  0x00,         /*bInterfaceSubClass : 1=BOOT, 0=no boot*/
-  0x00,         /*nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse*/
-  0,            /*iInterface: Index of string descriptor*/
-  /******************** Descriptor of CUSTOM_HID *************************/
-  /* 18 */
-  0x09,         /*bLength: CUSTOM_HID Descriptor size*/
-  CUSTOM_HID_DESCRIPTOR_TYPE, /*bDescriptorType: CUSTOM_HID*/
-  0x11,         /*bCUSTOM_HIDUSTOM_HID: CUSTOM_HID Class Spec release number*/
-  0x01,
-  0x00,         /*bCountryCode: Hardware target country*/
-  0x01,         /*bNumDescriptors: Number of CUSTOM_HID class descriptors to follow*/
-  0x22,         /*bDescriptorType*/
-  USBD_CUSTOM_HID_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
-  0x00,
-  /******************** Descriptor of Custom HID endpoints ********************/
-  /* 27 */
-  0x07,          /*bLength: Endpoint Descriptor size*/
-  USB_DESC_TYPE_ENDPOINT, /*bDescriptorType:*/
-
-  CUSTOM_HID_EPIN_ADDR,     /*bEndpointAddress: Endpoint Address (IN)*/
-  0x03,          /*bmAttributes: Interrupt endpoint*/
-  CUSTOM_HID_EPIN_SIZE, /*wMaxPacketSize: 2 Byte max */
-  0x00,
-  CUSTOM_HID_FS_BINTERVAL,          /*bInterval: Polling Interval */
-  /* 34 */
-
-  0x07,          /* bLength: Endpoint Descriptor size */
-  USB_DESC_TYPE_ENDPOINT, /* bDescriptorType: */
-  CUSTOM_HID_EPOUT_ADDR,  /*bEndpointAddress: Endpoint Address (OUT)*/
-  0x03, /* bmAttributes: Interrupt endpoint */
-  CUSTOM_HID_EPOUT_SIZE,  /* wMaxPacketSize: 2 Bytes max  */
+  CUSTOM_HID_EPOUT_SIZE,  /* wMaxPacketSize: 8 Bytes max  */
   0x00,
   CUSTOM_HID_FS_BINTERVAL,  /* bInterval: Polling Interval */
   /* 41 */
@@ -320,8 +202,8 @@ __ALIGN_BEGIN static uint8_t USBD_CUSTOM_HID_Desc[USB_CUSTOM_HID_DESC_SIZ] __ALI
   0x00,         /*bCountryCode: Hardware target country*/
   0x01,         /*bNumDescriptors: Number of CUSTOM_HID class descriptors to follow*/
   0x22,         /*bDescriptorType*/
-  USBD_CUSTOM_HID_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
-  0x00,
+  USBD_CUSTOM_HID_REPORT_DESC_SIZE & 0xff,/*wItemLength: Total length of Report descriptor*/
+  USBD_CUSTOM_HID_REPORT_DESC_SIZE >> 8,
 };
 
 /* USB Standard Device Descriptor */
@@ -584,32 +466,6 @@ static uint8_t  *USBD_CUSTOM_HID_GetFSCfgDesc(uint16_t *length)
 }
 
 /**
-  * @brief  USBD_CUSTOM_HID_GetHSCfgDesc
-  *         return HS configuration descriptor
-  * @param  speed : current device speed
-  * @param  length : pointer data length
-  * @retval pointer to descriptor buffer
-  */
-static uint8_t  *USBD_CUSTOM_HID_GetHSCfgDesc(uint16_t *length)
-{
-  *length = sizeof(USBD_CUSTOM_HID_CfgHSDesc);
-  return USBD_CUSTOM_HID_CfgHSDesc;
-}
-
-/**
-  * @brief  USBD_CUSTOM_HID_GetOtherSpeedCfgDesc
-  *         return other speed configuration descriptor
-  * @param  speed : current device speed
-  * @param  length : pointer data length
-  * @retval pointer to descriptor buffer
-  */
-static uint8_t  *USBD_CUSTOM_HID_GetOtherSpeedCfgDesc(uint16_t *length)
-{
-  *length = sizeof(USBD_CUSTOM_HID_OtherSpeedCfgDesc);
-  return USBD_CUSTOM_HID_OtherSpeedCfgDesc;
-}
-
-/**
   * @brief  USBD_CUSTOM_HID_DataIn
   *         handle data IN Stage
   * @param  pdev: device instance
@@ -639,8 +495,8 @@ static uint8_t  USBD_CUSTOM_HID_DataOut(USBD_HandleTypeDef *pdev,
 
   USBD_CUSTOM_HID_HandleTypeDef     *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)pdev->pClassData;
 
-  ((USBD_CUSTOM_HID_ItfTypeDef *)pdev->pUserData)->OutEvent(hhid->Report_buf[0],
-                                                            hhid->Report_buf[1]);
+  uint16_t len = USBD_LL_GetRxDataSize(pdev, epnum);
+  ((USBD_CUSTOM_HID_ItfTypeDef *)pdev->pUserData)->OutEvent(&hhid->Report_buf[0], len);
 
   USBD_LL_PrepareReceive(pdev, CUSTOM_HID_EPOUT_ADDR, hhid->Report_buf,
                          USBD_CUSTOMHID_OUTREPORT_BUF_SIZE);
@@ -660,8 +516,8 @@ static uint8_t USBD_CUSTOM_HID_EP0_RxReady(USBD_HandleTypeDef *pdev)
 
   if (hhid->IsReportAvailable == 1U)
   {
-    ((USBD_CUSTOM_HID_ItfTypeDef *)pdev->pUserData)->OutEvent(hhid->Report_buf[0],
-                                                              hhid->Report_buf[1]);
+    uint16_t len = USBD_LL_GetRxDataSize(pdev, 0);
+    ((USBD_CUSTOM_HID_ItfTypeDef *)pdev->pUserData)->OutEvent(&hhid->Report_buf[0], len);
     hhid->IsReportAvailable = 0U;
   }
 
