@@ -29,7 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "cl_common.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
@@ -39,7 +39,8 @@ extern "C" {
 void MX_ADC1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void Adc1_StartSample(uint32_t* result, uint16_t len);
+void Adc1_StartSample(void);
+void MarkAdcDone(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

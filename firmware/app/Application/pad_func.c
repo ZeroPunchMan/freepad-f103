@@ -45,20 +45,17 @@ static void SaveCalibration(void)
     HAL_FLASH_Lock();
 }
 
-static uint16_t adcReuslt[6];
 void PadFunc_Init(void)
 {
     LoadCalibration();
-    Adc1_StartSample((uint32_t *)adcReuslt, CL_ARRAY_LENGTH(adcReuslt));
 }
 
-extern volatile int dmaCount;
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1000)
+    if (SysTimeSpan(lastTime) > 1)
     {
         lastTime = GetSysTime();
-        CL_LOG_LINE("dma: %d", dmaCount);
+        Adc1_StartSample();
     }
 }

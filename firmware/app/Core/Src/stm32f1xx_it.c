@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "systime.h"
 #include "usart.h"
+#include "adc.h"
 /* USER CODE END Includes */
 
 /* External functions --------------------------------------------------------*/
@@ -213,7 +214,11 @@ void DMA1_Channel1_IRQHandler(void)
   /* USER CODE END DMA1_Channel1_IRQn 0 */
 
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
+  if(LL_DMA_IsActiveFlag_TC1(DMA1))
+  {
+    LL_DMA_ClearFlag_TC1(DMA1);
+    MarkAdcDone();
+  }
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
 
