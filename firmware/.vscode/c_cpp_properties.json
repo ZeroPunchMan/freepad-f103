@@ -7,7 +7,8 @@
                 "${workspaceFolder}/common/mmlib/inc",
                 "${workspaceFolder}/common/clib/inc",
                 "${workspaceFolder}/boot/Crypto/include",
-                "${workspaceFolder}/app/Core/Inc"
+                "${workspaceFolder}/app/Core/Inc",
+                "${workspaceFolder}/app/Application"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",
@@ -19,7 +20,8 @@
                 "int16_t=short",
                 "uint8_t=unsigned char",
                 "int8_t=char",
-                "__ALIGN_BEGIN="
+                "__ALIGN_BEGIN=",
+                "__STATIC_INLINE=static inline"
             ],
             "windowsSdkVersion": "10.0.22000.0",
             "compilerPath": "cl.exe",
