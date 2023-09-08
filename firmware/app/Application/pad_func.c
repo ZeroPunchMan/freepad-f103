@@ -5,6 +5,8 @@
 #include "flash_layout.h"
 #include "iflash_stm32.h"
 #include "cl_log.h"
+#include "adc.h"
+#include "systime.h"
 
 typedef struct
 {
@@ -14,12 +16,23 @@ typedef struct
     uint32_t crc;
 } CaliParams_t;
 static CaliParams_t caliParams = {0};
+
+static void PrintParams(CaliParams_t *params)
+{
+}
+
 static void LoadCalibration(void)
 {
     memcpy((void *)&caliParams, (void *)PAD_PARAM_ADDR, sizeof(caliParams));
     uint32_t crc = Ethernet_CRC32((const uint8_t *)&caliParams, CL_OFFSET_OF(CaliParams_t, crc));
     if (crc != caliParams.crc)
     { // use default params  todo
+        CL_LOG_LINE("use default params");
+    }
+    else
+    {
+        CL_LOG_LINE("use saved params");
+        PrintParams(&caliParams);
     }
 }
 
@@ -32,12 +45,20 @@ static void SaveCalibration(void)
     HAL_FLASH_Lock();
 }
 
+static uint16_t adcReuslt[6];
 void PadFunc_Init(void)
 {
     LoadCalibration();
+    Adc1_StartSample((uint32_t *)adcReuslt, CL_ARRAY_LENGTH(adcReuslt));
 }
 
+extern volatile int dmaCount;
 void PadFunc_Process(void)
-{
+{ // dmaCount
+    static uint32_t lastTime = 0;
+    if (SysTimeSpan(lastTime) > 1000)
+    {
+        lastTime = GetSysTime();
+        CL_LOG_LINE("dma: %d", dmaCount);
+    }
 }
-

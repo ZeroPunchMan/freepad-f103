@@ -195,5 +195,8 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+void Adc1_StartSample(uint32_t* result, uint16_t len)
+{
+  HAL_ADC_Start_DMA(&hadc1, result, len);
+}
 /* USER CODE END 1 */

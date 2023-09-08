@@ -30,6 +30,7 @@
 #include "systime.h"
 #include "cl_log.h"
 #include "cl_event_system.h"
+#include "pad_func.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -121,20 +122,22 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  PadFunc_Init();
   while (1)
   {
+    PadFunc_Process();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-   static uint32_t lastTime = 0;
-   if (SysTimeSpan(lastTime) >= 500)
-   {
-     lastTime = GetSysTime();
-     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-     CL_LOG_LINE("app2: %us", lastTime / 1000);
+    static uint32_t lastTime = 0;
+    if (SysTimeSpan(lastTime) >= 500)
+    {
+      lastTime = GetSysTime();
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+      // CL_LOG_LINE("app2: %us", lastTime / 1000);
 
-     SendHidTestReport();
-   }
+      // SendHidTestReport();
+    }
   }
   /* USER CODE END 3 */
 }
