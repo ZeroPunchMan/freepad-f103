@@ -48,14 +48,15 @@ void Hc165Scan(uint16_t numOfBits, uint8_t *buff)
 
     for (uint16_t i = 0; i < numOfBits; i++)
     {
-        ClkPin(0);
-        Delay(DELAY_NUM);
-        ClkPin(1);
-        Delay(DELAY_NUM);
         uint8_t level = ReadDatPin();
 
         uint16_t byteOffset = i / 8;
         uint16_t bitOffset = i % 8;
         buff[byteOffset] |= level << bitOffset;
+        
+        ClkPin(0);
+        Delay(DELAY_NUM);
+        ClkPin(1);
+        Delay(DELAY_NUM);
     }
 }

@@ -7,6 +7,7 @@
 #include "cl_log.h"
 #include "adc.h"
 #include "systime.h"
+#include "hc165scan.h"
 
 typedef struct
 {
@@ -53,9 +54,12 @@ void PadFunc_Init(void)
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1)
+    if (SysTimeSpan(lastTime) > 1000)
     {
         lastTime = GetSysTime();
-        Adc1_StartSample();
+        // Adc1_StartSample();
+        uint8_t button[2];
+        Hc165Scan(16, button);
+        CL_LOG_LINE("button: %02x %02x", button[0], button[1]);
     }
 }
