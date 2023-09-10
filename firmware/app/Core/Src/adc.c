@@ -87,7 +87,7 @@ void MX_ADC1_Init(void)
   ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
   ADC_REG_InitStruct.SequencerLength = LL_ADC_REG_SEQ_SCAN_ENABLE_6RANKS;
   ADC_REG_InitStruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_DISABLE;
-  ADC_REG_InitStruct.ContinuousMode = LL_ADC_REG_CONV_SINGLE;
+  ADC_REG_InitStruct.ContinuousMode = LL_ADC_REG_CONV_CONTINUOUS;
   ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_UNLIMITED;
   LL_ADC_REG_Init(ADC1, &ADC_REG_InitStruct);
 
@@ -127,7 +127,7 @@ void MX_ADC1_Init(void)
                          LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA), (uint32_t)adcResult, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
   LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, CL_ARRAY_LENGTH(adcResult));
 
-  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
+  // LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1); //todo circular 不开中断
 
   LL_ADC_Enable(ADC1);
@@ -137,6 +137,7 @@ void MX_ADC1_Init(void)
   {
   }
 
+  LL_ADC_REG_StartConversionSWStart(ADC1);
   /* USER CODE END ADC1_Init 2 */
 
 }
