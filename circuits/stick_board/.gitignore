@@ -1,0 +1,6 @@
+stick_board-backups
+*.lck
+gerber
+fp-info-cache
+*.pdf
+*.bak

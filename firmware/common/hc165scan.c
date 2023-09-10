@@ -2,7 +2,7 @@
 #include "board.h"
 #include "mmlib_config.h"
 
-#define DELAY_NUM (5)
+#define DELAY_NUM (3)
 
 static inline void Delay(uint8_t x)
 {
