@@ -10,22 +10,23 @@
 #include "hc165scan.h"
 #include "usbd_custom_hid_if.h"
 #include "cl_serialize.h"
+#include "tim.h"
+#include "led.h"
 
-static XosHidReport_t xosReport =
-    {
-        .leftX = UINT16_MAX, // max 65535
-        .leftY = UINT16_MAX,
+static XosHidReport_t xosReport = {
+    .leftX = UINT16_MAX, // max 65535
+    .leftY = UINT16_MAX,
 
-        .rightX = UINT16_MAX / 2,
-        .rightY = UINT16_MAX / 2,
+    .rightX = UINT16_MAX / 2,
+    .rightY = UINT16_MAX / 2,
 
-        .leftTrigger = 0x3ff, // max 0x3ff
-        .rightTrigger = 0x3ff,
+    .leftTrigger = 0x3ff, // max 0x3ff
+    .rightTrigger = 0x3ff,
 
-        .dPad = 0, // 1~8
-        .button[0] = 0,
-        .button[1] = 0,
-        .reserved = 0,
+    .dPad = 0, // 1~8
+    .button[0] = 0,
+    .button[1] = 0,
+    .reserved = 0,
 };
 
 typedef struct
@@ -89,12 +90,13 @@ static void SaveCalibration(void)
 void PadFunc_Init(void)
 {
     LoadCalibration();
+    SetXosLedStyle(XosLedStyle_On);
 }
 
 static const uint8_t xosBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 static const uint8_t xosBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
 static const uint8_t xosDpadOffset[4] = {9, 10, 11, 12};
-uint8_t DirToDpad(bool up, bool right, bool down, bool left)
+static uint8_t DirToDpad(bool up, bool right, bool down, bool left)
 {
     uint8_t bitsFlag = 0;
     bitsFlag |= (up ? 1 : 0) << 3;
@@ -145,6 +147,26 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
         return (adc - min) * 1023ul / (max - min);
     else
         return 0x3ff;
+}
+
+typedef enum
+{
+    CaliSta_None,   // 正常模式
+    CaliSta_Middle, // 校准中间值
+    CaliSta_Margin, // 校准边界值
+} CaliStatus_t;
+static CaliStatus_t caliStatus = CaliSta_None;
+static void CaliProc(void)
+{
+    switch (caliStatus)
+    {
+    case CaliSta_None:
+        break;
+    case CaliSta_Middle:
+        break;
+    case CaliSta_Margin:
+        break;
+    }
 }
 
 void PadFunc_Process(void)
@@ -210,4 +232,6 @@ void PadFunc_Process(void)
 
         USBD_SendXosReport(&xosReport);
     }
+
+    CaliProc();
 }

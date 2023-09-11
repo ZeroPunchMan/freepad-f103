@@ -29,6 +29,12 @@
         "stdio.h": "c",
         "cl_event_system.h": "c",
         "iflash_stm32.h": "c",
-        "usbd_custom_hid_if.h": "c"
+        "usbd_custom_hid_if.h": "c",
+        "bit": "c",
+        "compare": "c",
+        "cstddef": "c",
+        "limits": "c",
+        "type_traits": "c",
+        "xutility": "c"
     }
 }

@@ -1813,6 +1813,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\common\hc165scan.c</FilePath>
             </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

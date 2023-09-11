@@ -1509,6 +1509,11 @@
     (uuid fc6d474d-541b-466b-823d-a81d1960c89b)
   )
 
+  (rectangle (start 106.68 17.78) (end 262.89 74.93)
+    (stroke (width 0) (type default))
+    (fill (type none))
+    (uuid 563123ec-af59-4178-810f-b4fdd52c5f46)
+  )
   (rectangle (start 13.97 118.11) (end 45.72 135.89)
     (stroke (width 0) (type default))
     (fill (type none))
@@ -1525,6 +1530,10 @@
     (uuid b9b18eb8-ef28-4755-a097-b6bd24ed44d6)
   )
 
+  (text "MOTOR" (at 107.95 21.59 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 356596cb-248a-4011-a408-c9c107ab3398)
+  )
   (text "STICK" (at 55.88 17.78 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4f148dd1-5e7a-4b63-8a6c-0f39269016d3)

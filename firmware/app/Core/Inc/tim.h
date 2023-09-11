@@ -29,7 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "cl_common.h"
 /* USER CODE END Includes */
 
 extern TIM_HandleTypeDef htim1;
@@ -46,7 +46,15 @@ void MX_TIM3_Init(void);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN Prototypes */
-
+typedef enum
+{
+  PwmChan_MotorLeftTop,
+  PwmChan_MotorLeftBottom,
+  PwmChan_MotorRightBottom,
+  PwmChan_MotorRightTop,
+  PwmChan_XosLed,
+} PwmChannel_t;
+void PwmSetDuty(PwmChannel_t chan, uint16_t duty);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
