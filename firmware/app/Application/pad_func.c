@@ -1,9 +1,5 @@
 #include "pad_func.h"
 #include "main.h"
-#include "crc.h"
-#include "string.h"
-#include "flash_layout.h"
-#include "iflash_stm32.h"
 #include "cl_log.h"
 #include "adc.h"
 #include "systime.h"
@@ -12,6 +8,7 @@
 #include "cl_serialize.h"
 #include "tim.h"
 #include "led.h"
+#include "cali.h"
 
 static XosHidReport_t xosReport = {
     .leftX = UINT16_MAX, // max 65535
@@ -29,67 +26,10 @@ static XosHidReport_t xosReport = {
     .reserved = 0,
 };
 
-typedef struct
-{
-    uint16_t leftX[3], leftY[3];              // min,middle,max
-    uint16_t rightX[3], rightY[3];            // min,middle,max
-    uint16_t leftTrigger[2], rightTrigger[2]; // min,max
-    uint32_t crc;
-} CaliParams_t;
-static CaliParams_t caliParams = {0};
-
-static void PrintParams(CaliParams_t *params)
-{
-}
-
-static void LoadCalibration(void)
-{
-    memcpy((void *)&caliParams, (void *)PAD_PARAM_ADDR, sizeof(caliParams));
-    uint32_t crc = Ethernet_CRC32((const uint8_t *)&caliParams, CL_OFFSET_OF(CaliParams_t, crc));
-    if (crc != caliParams.crc)
-    { // use default params
-        CL_LOG_LINE("use default params");
-        caliParams.leftX[0] = 0;
-        caliParams.leftX[1] = 2048;
-        caliParams.leftX[2] = 4096;
-
-        caliParams.leftY[0] = 0;
-        caliParams.leftY[1] = 2048;
-        caliParams.leftY[2] = 4096;
-
-        caliParams.rightX[0] = 0;
-        caliParams.rightX[1] = 2048;
-        caliParams.rightX[2] = 4096;
-
-        caliParams.rightY[0] = 0;
-        caliParams.rightY[1] = 2048;
-        caliParams.rightY[2] = 4096;
-
-        caliParams.leftTrigger[0] = 0;
-        caliParams.leftTrigger[1] = 4096;
-
-        caliParams.rightTrigger[0] = 0;
-        caliParams.rightTrigger[1] = 4096;
-    }
-    else
-    {
-        CL_LOG_LINE("use saved params");
-        PrintParams(&caliParams);
-    }
-}
-
-static void SaveCalibration(void)
-{
-    caliParams.crc = Ethernet_CRC32((const uint8_t *)&caliParams, CL_OFFSET_OF(CaliParams_t, crc));
-    HAL_FLASH_Unlock();
-    IFlashStm32_ErasePages(PAD_PARAM_ADDR, 1);
-    IFlashStm32_Write(PAD_PARAM_ADDR, (const uint8_t *)&caliParams, sizeof(caliParams));
-    HAL_FLASH_Lock();
-}
 
 void PadFunc_Init(void)
 {
-    LoadCalibration();
+    Cali_Init();
     SetXosLedStyle(XosLedStyle_On);
 }
 
@@ -149,26 +89,6 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
         return 0x3ff;
 }
 
-typedef enum
-{
-    CaliSta_None,   // 正常模式
-    CaliSta_Middle, // 校准中间值
-    CaliSta_Margin, // 校准边界值
-} CaliStatus_t;
-static CaliStatus_t caliStatus = CaliSta_None;
-static void CaliProc(void)
-{
-    switch (caliStatus)
-    {
-    case CaliSta_None:
-        break;
-    case CaliSta_Middle:
-        break;
-    case CaliSta_Margin:
-        break;
-    }
-}
-
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
@@ -204,34 +124,37 @@ void PadFunc_Process(void)
             }
         }
 
+        const CaliParams_t* caliParams = GetCaliParams();
+
         // sticks
         xosReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
-                                        caliParams.leftX[0],
-                                        caliParams.leftX[1],
-                                        caliParams.leftX[2]);
+                                        caliParams->leftX[0],
+                                        caliParams->leftX[1],
+                                        caliParams->leftX[2]);
 
         xosReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
-                                        caliParams.leftY[0],
-                                        caliParams.leftY[1],
-                                        caliParams.leftY[2]);
+                                        caliParams->leftY[0],
+                                        caliParams->leftY[1],
+                                        caliParams->leftY[2]);
 
         xosReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
-                                         caliParams.rightX[0],
-                                         caliParams.rightX[1],
-                                         caliParams.rightX[2]);
+                                         caliParams->rightX[0],
+                                         caliParams->rightX[1],
+                                         caliParams->rightX[2]);
 
         xosReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
-                                         caliParams.rightY[0],
-                                         caliParams.rightY[1],
-                                         caliParams.rightY[2]);
+                                         caliParams->rightY[0],
+                                         caliParams->rightY[1],
+                                         caliParams->rightY[2]);
         // hall
         xosReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
-                                             caliParams.leftTrigger[0], caliParams.leftTrigger[1]);
+                                             caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
         xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
-                                              caliParams.rightTrigger[0], caliParams.rightTrigger[1]);
+                                              caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
         USBD_SendXosReport(&xosReport);
     }
 
-    CaliProc();
+    Cali_Process();
 }
+

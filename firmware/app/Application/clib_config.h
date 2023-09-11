@@ -10,7 +10,7 @@ extern "C" {
 //-------------event type------------------
 typedef enum
 {
-    CL_Event_SgpRecvMsg = 0,
+    CL_Event_Button = 0, //session = ButtonIdx_t, eventArg = ButtonEvent_t*
     CL_EventMax,
 } CL_Event_t;
 

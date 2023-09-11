@@ -1818,6 +1818,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\common\led.c</FilePath>
             </File>
+            <File>
+              <FileName>button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\button.c</FilePath>
+            </File>
+            <File>
+              <FileName>cali.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Application\cali.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

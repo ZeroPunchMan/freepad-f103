@@ -32,6 +32,7 @@
 #include "cl_event_system.h"
 #include "pad_func.h"
 #include "led.h"
+#include "button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,10 +128,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  Button_Init();
   Led_Init();
   PadFunc_Init();
   while (1)
   {
+    Button_Process();
     Led_Process();
     PadFunc_Process();
     /* USER CODE END WHILE */

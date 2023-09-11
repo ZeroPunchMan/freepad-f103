@@ -35,6 +35,8 @@
         "cstddef": "c",
         "limits": "c",
         "type_traits": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "crc.h": "c",
+        "cali.h": "c"
     }
 }
