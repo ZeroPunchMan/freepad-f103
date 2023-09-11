@@ -128,7 +128,7 @@ void MX_ADC1_Init(void)
   LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, CL_ARRAY_LENGTH(adcResult));
 
   // LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
-  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1); //todo circular 不开中断
+  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1); 
 
   LL_ADC_Enable(ADC1);
   HAL_Delay(2);
@@ -143,18 +143,8 @@ void MX_ADC1_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
-volatile bool adcBusy = false;
-void Adc1_StartSample(void)
+uint16_t GetAdcResult(AdcChannel_t chan)
 {
-  if(adcBusy)
-    return;
-    
-  adcBusy = true;
-  LL_ADC_REG_StartConversionSWStart(ADC1);
-}
-
-void MarkAdcDone(void)
-{
-  adcBusy = false;
+  return adcResult[chan];
 }
 /* USER CODE END 1 */

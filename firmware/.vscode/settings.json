@@ -28,6 +28,7 @@
         "signal.h": "c",
         "stdio.h": "c",
         "cl_event_system.h": "c",
-        "iflash_stm32.h": "c"
+        "iflash_stm32.h": "c",
+        "usbd_custom_hid_if.h": "c"
     }
 }

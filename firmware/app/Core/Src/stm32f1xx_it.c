@@ -214,7 +214,6 @@ void DMA1_Channel1_IRQHandler(void)
   if(LL_DMA_IsActiveFlag_TC1(DMA1))
   {
     LL_DMA_ClearFlag_TC1(DMA1);
-    MarkAdcDone();
   }
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }

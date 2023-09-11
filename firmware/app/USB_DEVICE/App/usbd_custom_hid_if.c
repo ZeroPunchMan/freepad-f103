@@ -329,13 +329,6 @@ static int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len)
 /* USER CODE END 7 */
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
-typedef struct
-{
-	uint16_t leftX, leftY, rightX, rightY, leftTrigger, rightTrigger;
-	uint8_t dPad;
-	uint8_t button[2];
-	uint8_t reserved;
-} XosHidReport_t;
 
 void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
 {
@@ -360,46 +353,28 @@ void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
 	buff[15] = report->reserved;
 }
 
-
-static XosHidReport_t xosReport = 
+CL_Result_t USBD_SendXosReport(const XosHidReport_t* report)
 {
-	.leftX = UINT16_MAX, //max 65535
-	.leftY = UINT16_MAX,
+  USBD_CUSTOM_HID_HandleTypeDef     *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
+  if (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)
+  {
+    if (hhid->state == CUSTOM_HID_IDLE)
+    {
+      static uint8_t inputReportData[17] = {0};
+      inputReportData[0] = 1;
 
-	.rightX = UINT16_MAX / 2,
-	.rightY = UINT16_MAX / 2,
+      XosHidReportSerialize(inputReportData + 1, report);
 
-	.leftTrigger = 0x3ff, //max 0x3ff
-	.rightTrigger = 0x3ff,
-
-	.dPad = 0, //1~8
-	.button[0] = 0,
-	.button[1] = 0,
-	.reserved = 0,
-};
-
-void SendHidTestReport(void)
-{
-  static uint8_t inputReportData[17] = {0};
-  inputReportData[0] = 1;
-
-  XosHidReportSerialize(inputReportData + 1, &xosReport);
-  // if (xosReport.button[0])
-  //   xosReport.button[0] = 0;
-  // else
-  //   xosReport.button[0] = 0x08;
-
-  if (xosReport.leftTrigger)
-    xosReport.leftTrigger = 0;
-  else
-    xosReport.leftTrigger = 0x3ff;
-
-  if (xosReport.rightTrigger)
-    xosReport.rightTrigger = 0;
-  else
-    xosReport.rightTrigger = 0x3ff;
-
-  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, inputReportData, sizeof(inputReportData));
+      hhid->state = CUSTOM_HID_BUSY;
+      USBD_LL_Transmit(&hUsbDeviceFS, CUSTOM_HID_EPIN_ADDR, inputReportData, sizeof(inputReportData));
+      return CL_ResSuccess;
+    }
+    else
+    {
+      return CL_ResBusy;
+    }
+  }
+  return CL_ResFailed;
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 /**

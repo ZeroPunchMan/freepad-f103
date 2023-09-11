@@ -30,7 +30,7 @@
 #include "usbd_customhid.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "cl_common.h"
 /* USER CODE END INCLUDE */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -63,6 +63,13 @@
 
 /* USER CODE BEGIN EXPORTED_TYPES */
 
+typedef struct
+{
+	uint16_t leftX, leftY, rightX, rightY, leftTrigger, rightTrigger;
+	uint8_t dPad;
+	uint8_t button[2];
+	uint8_t reserved;
+} XosHidReport_t;
 /* USER CODE END EXPORTED_TYPES */
 
 /**
@@ -104,7 +111,7 @@ extern USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_fops_FS;
   */
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-
+CL_Result_t USBD_SendXosReport(const XosHidReport_t* report);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**

@@ -33,14 +33,21 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
-
+typedef enum
+{
+  AdcChan_LeftX = 0,
+  AdcChan_LeftY,
+  AdcChan_RightX,
+  AdcChan_RightY,
+  AdcChan_LeftHall,
+  AdcChan_RightHall,
+} AdcChannel_t;
 /* USER CODE END Private defines */
 
 void MX_ADC1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void Adc1_StartSample(void);
-void MarkAdcDone(void);
+uint16_t GetAdcResult(AdcChannel_t chan);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
