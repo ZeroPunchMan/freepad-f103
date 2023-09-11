@@ -7,6 +7,7 @@
 #include "iflash_stm32.h"
 #include "cl_event_system.h"
 #include "button.h"
+#include "led.h"
 
 static CaliParams_t caliParams = {0};
 
@@ -16,13 +17,13 @@ const CaliParams_t *GetCaliParams(void)
 }
 
 static void PrintParams(CaliParams_t *params)
-{ 
+{
     CL_LOG_LINE("**********");
     CL_LOG_LINE("cali params:");
     CL_LOG_LINE("left x: %d, %d, %d", caliParams.leftX[0], caliParams.leftX[1], caliParams.leftX[2]);
     CL_LOG_LINE("left y: %d, %d, %d", caliParams.leftY[0], caliParams.leftY[1], caliParams.leftY[2]);
     CL_LOG_LINE("left trigger: %d, %d", caliParams.leftTrigger[0], caliParams.leftTrigger[1]);
-    
+
     CL_LOG_LINE("right x: %d, %d, %d", caliParams.rightX[0], caliParams.rightX[1], caliParams.rightX[2]);
     CL_LOG_LINE("right y: %d, %d, %d", caliParams.rightY[0], caliParams.rightY[1], caliParams.rightY[2]);
     CL_LOG_LINE("right trigger: %d, %d", caliParams.rightTrigger[0], caliParams.rightTrigger[1]);
@@ -82,13 +83,54 @@ typedef enum
 } CaliStatus_t;
 static CaliStatus_t caliStatus = CaliSta_None;
 
-bool OnBtnPairEvent(void *eventArg)
+static void ToCaliNone(void)
 {
+    caliStatus = CaliSta_None;
+    CL_LOG_LINE("cali done");
+}
+
+static void ToCaliMiddle(void)
+{
+    SetXosLedStyle(XosLedStyle_Breath);
+    caliStatus = CaliSta_Middle;
+    CL_LOG_LINE("start cali middle");
+}
+
+static void ToCaliMargin(void)
+{
+    SetXosLedStyle(XosLedStyle_Blink);
+    caliStatus = CaliSta_Margin;
+    CL_LOG_LINE("start cali margin");
+}
+
+bool OnBtnPairEvent(void *eventArg)
+{ // pair长按,进入中间值校准状态
+    ButtonEvent_t *pEvt = (ButtonEvent_t *)eventArg;
+    if (pEvt[0] == ButtonEvent_LongPress)
+    {
+        if (caliStatus == CaliSta_None)
+        {
+            ToCaliMiddle();
+        }
+    }
     return true;
 }
 
 bool OnBtnAEvent(void *eventArg)
-{
+{ // A短按,切换校准步骤
+    ButtonEvent_t *pEvt = (ButtonEvent_t *)eventArg;
+    if (pEvt[0] == ButtonEvent_Click)
+    {
+        if (caliStatus == CaliSta_Middle)
+        {
+            ToCaliMargin();
+        }
+        else if (caliStatus == CaliSta_Margin)
+        {
+            SaveCalibration();
+            ToCaliNone();
+        }
+    }
     return true;
 }
 
@@ -106,8 +148,10 @@ void Cali_Process(void)
     case CaliSta_None:
         break;
     case CaliSta_Middle:
+        //摇杆和扳机值稳定后,记录下来作为摇杆的中间值,扳机的最小值 todo
         break;
-    case CaliSta_Margin:
+    case CaliSta_Margin: 
+        //记录摇杆的最大最小值,扳机的最大值 todo
         break;
     }
 }

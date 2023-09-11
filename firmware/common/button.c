@@ -5,6 +5,7 @@
 #include "string.h"
 #include "cl_log.h"
 #include "cl_event_system.h"
+#include "pad_func.h"
 
 //********************button define*****************************
 
@@ -16,13 +17,13 @@ typedef struct
 } ButtonDef_t;
 
 static inline bool IsPairPress(void)
-{ // todo
-    return false;
+{ 
+    return IsButtonPress(XosBtnIdx_Pair);
 }
 
 static inline bool IsAPress(void)
-{ // todo
-    return false;
+{ 
+    return IsButtonPress(XosBtnIdx_A);
 }
 
 const ButtonDef_t buttonDef[BtnIdx_Max] =

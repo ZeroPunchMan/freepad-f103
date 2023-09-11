@@ -26,7 +26,6 @@ static XosHidReport_t xosReport = {
     .reserved = 0,
 };
 
-
 void PadFunc_Init(void)
 {
     Cali_Init();
@@ -124,7 +123,7 @@ void PadFunc_Process(void)
             }
         }
 
-        const CaliParams_t* caliParams = GetCaliParams();
+        const CaliParams_t *caliParams = GetCaliParams();
 
         // sticks
         xosReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
@@ -158,3 +157,14 @@ void PadFunc_Process(void)
     Cali_Process();
 }
 
+bool IsButtonPress(XosBtnIdx_t idx)
+{
+    switch (idx)
+    {
+    case XosBtnIdx_Pair:
+        return (xosReport.button[0] & (1 << 1)) != 0;
+    case XosBtnIdx_A:
+        return (xosReport.button[0] & (1 << 5)) != 0;
+    }
+    return false;
+}
