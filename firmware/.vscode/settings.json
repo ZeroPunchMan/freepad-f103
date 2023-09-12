@@ -37,6 +37,12 @@
         "type_traits": "c",
         "xutility": "c",
         "crc.h": "c",
-        "cali.h": "c"
+        "cali.h": "c",
+        "utility": "c",
+        "adc.h": "c",
+        "math.h": "c",
+        "corecrt_math.h": "c",
+        "corecrt_math_defines.h": "c",
+        "corecrt.h": "c"
     }
 }
