@@ -46,7 +46,7 @@ EndBSPDependencies */
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_hid.h"
 #include "usbd_ctlreq.h"
-
+#include "cl_serialize.h"
 
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
@@ -387,25 +387,14 @@ static uint8_t  USBD_HID_Setup(USBD_HandleTypeDef *pdev,
 
 void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
 {
-	buff[0] = report->leftX & 0xff;
-	buff[1] = report->leftX >> 8;
-	buff[2] = report->leftY & 0xff;
-	buff[3] = report->leftY >> 8;
-
-	buff[4] = report->rightX & 0xff;
-	buff[5] = report->rightX >> 8;
-	buff[6] = report->rightY & 0xff;
-	buff[7] = report->rightY >> 8;
-
-	buff[8] = report->leftTrigger & 0xff;
-	buff[9] = report->leftTrigger >> 8;
-	buff[10] = report->rightTrigger & 0xff;
-	buff[11] = report->rightTrigger >> 8;
-
-	buff[12] = report->dPad;
-	buff[13] = report->button[0];
-	buff[14] = report->button[1];
-	buff[15] = report->reserved;
+  buff[2] = report->button[0];
+  buff[3] = report->button[1];
+  buff[4] = report->leftTrigger;
+  buff[5] = report->rightTrigger;
+  CL_Int16ToBytes(report->leftX, buff + 6, CL_LittleEndian);
+  CL_Int16ToBytes(report->leftY, buff + 8, CL_LittleEndian);
+  CL_Int16ToBytes(report->rightX, buff + 10, CL_LittleEndian);
+  CL_Int16ToBytes(report->rightY, buff + 12, CL_LittleEndian);
 }
 
 CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* report)
@@ -415,10 +404,11 @@ CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* r
   {
     if (hhid->state == HID_IDLE)
     {
-      static uint8_t inputReportData[17] = {0};
-      inputReportData[0] = 1;
-
-      XosHidReportSerialize(inputReportData + 1, report);
+      static uint8_t inputReportData[20] = {0x00, 0x14, 0x00, 0x10, 0x00, 
+                                  0x00, 0x00, 0x00, 0x00, 0x00, 
+                                  0x00, 0x00, 0x00, 0x00, 0x00, 
+                                  0x00, 0x00, 0x00, 0x00, 0x00};
+      XosHidReportSerialize(inputReportData, report);
 
       hhid->state = HID_BUSY;
       USBD_LL_Transmit(pdev, 0x81, inputReportData, sizeof(inputReportData));

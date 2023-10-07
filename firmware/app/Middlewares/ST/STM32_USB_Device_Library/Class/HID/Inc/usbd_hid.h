@@ -85,10 +85,9 @@ USBD_HID_HandleTypeDef;
 
 typedef struct
 {
-	uint16_t leftX, leftY, rightX, rightY, leftTrigger, rightTrigger;
-	uint8_t dPad;
-	uint8_t button[2];
-	uint8_t reserved;
+  int16_t leftX, leftY, rightX, rightY;
+  uint8_t leftTrigger, rightTrigger;
+  uint8_t button[2];
 } XosHidReport_t;
 /**
   * @}
