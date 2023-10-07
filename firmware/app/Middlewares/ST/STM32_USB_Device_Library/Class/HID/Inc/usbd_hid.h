@@ -27,7 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include  "usbd_ioreq.h"
-
+#include  "cl_common.h"
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
@@ -41,15 +41,6 @@ extern "C" {
 /** @defgroup USBD_HID_Exported_Defines
   * @{
   */
-#define HID_EPIN_ADDR                 0x81U
-#define HID_EPIN_SIZE                 0x04U
-
-#define USB_HID_CONFIG_DESC_SIZ       34U
-#define USB_HID_DESC_SIZ              9U
-#define HID_MOUSE_REPORT_DESC_SIZE    74U
-
-#define HID_DESCRIPTOR_TYPE           0x21U
-#define HID_REPORT_DESC               0x22U
 
 #ifndef HID_HS_BINTERVAL
 #define HID_HS_BINTERVAL            0x07U
@@ -91,6 +82,14 @@ typedef struct
   HID_StateTypeDef     state;
 }
 USBD_HID_HandleTypeDef;
+
+typedef struct
+{
+	uint16_t leftX, leftY, rightX, rightY, leftTrigger, rightTrigger;
+	uint8_t dPad;
+	uint8_t button[2];
+	uint8_t reserved;
+} XosHidReport_t;
 /**
   * @}
   */
@@ -118,11 +117,9 @@ extern USBD_ClassTypeDef  USBD_HID;
 /** @defgroup USB_CORE_Exported_Functions
   * @{
   */
-uint8_t USBD_HID_SendReport(USBD_HandleTypeDef *pdev,
-                            uint8_t *report,
-                            uint16_t len);
 
 uint32_t USBD_HID_GetPollingInterval(USBD_HandleTypeDef *pdev);
+CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* report);
 
 /**
   * @}

@@ -62,13 +62,11 @@
   * @{
   */
 
-#define USBD_VID     1155
-#define USBD_LANGID_STRING     1033
-#define USBD_MANUFACTURER_STRING     "Lyj"
-#define USBD_PID_FS     22315
-#define USBD_PRODUCT_STRING_FS     "STM32 Human interface"
-#define USBD_CONFIGURATION_STRING_FS     "HID Config"
-#define USBD_INTERFACE_STRING_FS     "HID Interface"
+#define USBD_LANGID_STRING 1033
+#define USBD_MANUFACTURER_STRING "Microsoft"
+#define USBD_PRODUCT_STRING_FS "Xbox360 Controller for Windows"
+#define USBD_SERIAL_NUMBER "00000009"
+
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
@@ -131,13 +129,13 @@ uint8_t * USBD_FS_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *leng
 
 USBD_DescriptorsTypeDef FS_Desc =
 {
-  USBD_FS_DeviceDescriptor
-, USBD_FS_LangIDStrDescriptor
-, USBD_FS_ManufacturerStrDescriptor
-, USBD_FS_ProductStrDescriptor
-, USBD_FS_SerialStrDescriptor
-, USBD_FS_ConfigStrDescriptor
-, USBD_FS_InterfaceStrDescriptor
+  USBD_FS_DeviceDescriptor, 
+  USBD_FS_LangIDStrDescriptor, 
+  NULL, 
+  USBD_FS_ProductStrDescriptor, 
+  USBD_FS_SerialStrDescriptor, 
+  NULL, 
+  NULL
 };
 
 #if defined ( __ICCARM__ ) /* IAR Compiler */
@@ -146,24 +144,20 @@ USBD_DescriptorsTypeDef FS_Desc =
 /** USB standard device descriptor. */
 __ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
 {
-  0x12,                       /*bLength */
-  USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
-  0x00,                       /*bcdUSB */
-  0x02,
-  0x00,                       /*bDeviceClass*/
-  0x00,                       /*bDeviceSubClass*/
-  0x00,                       /*bDeviceProtocol*/
-  USB_MAX_EP0_SIZE,           /*bMaxPacketSize*/
-  LOBYTE(USBD_VID),           /*idVendor*/
-  HIBYTE(USBD_VID),           /*idVendor*/
-  LOBYTE(USBD_PID_FS),        /*idProduct*/
-  HIBYTE(USBD_PID_FS),        /*idProduct*/
-  0x00,                       /*bcdDevice rel. 2.00*/
-  0x02,
-  USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
-  USBD_IDX_PRODUCT_STR,       /*Index of product string*/
-  USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
-  USBD_MAX_NUM_CONFIGURATION  /*bNumConfigurations*/
+  0x12, //length 
+  0x01, //type device
+  0x00, 0x02, //usb version
+  0xFF, //device class
+  0xFF, //sub class
+  0xFF, //protocl
+  USB_MAX_EP0_SIZE, //max pack size
+  0x5E, 0x04, //verdor
+  0x8E, 0x02, //product
+  0x0a, 0x07, //device
+  0x00, //iManu
+  0x02, //iProduct
+  0x03, //iSerial
+  0x01  //bNumCfg
 };
 
 /* USB_DeviceDescriptor */
@@ -291,43 +285,6 @@ uint8_t * USBD_FS_SerialStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
   return (uint8_t *) USBD_StringSerial;
 }
 
-/**
-  * @brief  Return the configuration string descriptor
-  * @param  speed : Current device speed
-  * @param  length : Pointer to data length variable
-  * @retval Pointer to descriptor buffer
-  */
-uint8_t * USBD_FS_ConfigStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
-{
-  if(speed == USBD_SPEED_HIGH)
-  {
-    USBD_GetString((uint8_t *)USBD_CONFIGURATION_STRING_FS, USBD_StrDesc, length);
-  }
-  else
-  {
-    USBD_GetString((uint8_t *)USBD_CONFIGURATION_STRING_FS, USBD_StrDesc, length);
-  }
-  return USBD_StrDesc;
-}
-
-/**
-  * @brief  Return the interface string descriptor
-  * @param  speed : Current device speed
-  * @param  length : Pointer to data length variable
-  * @retval Pointer to descriptor buffer
-  */
-uint8_t * USBD_FS_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
-{
-  if(speed == 0)
-  {
-    USBD_GetString((uint8_t *)USBD_INTERFACE_STRING_FS, USBD_StrDesc, length);
-  }
-  else
-  {
-    USBD_GetString((uint8_t *)USBD_INTERFACE_STRING_FS, USBD_StrDesc, length);
-  }
-  return USBD_StrDesc;
-}
 
 /**
   * @brief  Create the serial number string descriptor

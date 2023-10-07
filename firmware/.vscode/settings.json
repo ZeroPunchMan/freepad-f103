@@ -43,6 +43,7 @@
         "math.h": "c",
         "corecrt_math.h": "c",
         "corecrt_math_defines.h": "c",
-        "corecrt.h": "c"
+        "corecrt.h": "c",
+        "usbd_hid.h": "c"
     }
 }

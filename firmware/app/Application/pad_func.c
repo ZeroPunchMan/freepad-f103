@@ -4,11 +4,12 @@
 #include "adc.h"
 #include "systime.h"
 #include "hc165scan.h"
-#include "usbd_custom_hid_if.h"
 #include "cl_serialize.h"
 #include "tim.h"
 #include "led.h"
 #include "cali.h"
+#include "usb_device.h"
+#include "usbd_hid.h"
 
 static XosHidReport_t xosReport = {
     .leftX = UINT16_MAX, // max 65535
@@ -151,7 +152,7 @@ void PadFunc_Process(void)
         xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
-        USBD_SendXosReport(&xosReport);
+        USBD_SendXosReport(&hUsbDeviceFS, &xosReport);
     }
 
     Cali_Process();
