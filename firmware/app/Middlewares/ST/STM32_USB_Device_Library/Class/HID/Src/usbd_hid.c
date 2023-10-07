@@ -483,6 +483,8 @@ static uint8_t  USBD_HID_DataIn(USBD_HandleTypeDef *pdev,
 
 static uint8_t USBD_HID_DataOut(struct _USBD_HandleTypeDef *pdev, uint8_t epnum)
 {
+    //if([0] == 0x00 && [1] == 0x08)
+    //  [3] = left motor, [4] = right motor
     // CL_LOG_LINE("out %x, %d", epnum, pdev->ep_out[2].total_length);
     USBD_LL_PrepareReceive(pdev, 0x02, endpoint_02_recv, sizeof(endpoint_02_recv));
     return USBD_OK;

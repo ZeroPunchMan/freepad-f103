@@ -31,6 +31,8 @@ void PadFunc_Init(void)
     SetXosLedStyle(XosLedStyle_On);
 }
 
+// button[0]: R3 L3 LM RM 右 左 下 上
+// button[1]: Y X B A RES XBOX RB LB 
 static const uint8_t xosBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 static const uint8_t xosBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
 
@@ -59,7 +61,7 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1000)
+    if (SysTimeSpan(lastTime) > 1000) //todo interval
     {
         lastTime = GetSysTime();
 
@@ -82,6 +84,7 @@ void PadFunc_Process(void)
                 xosReport.button[1] |= 1 << i;
             }
         }
+        xosReport.button[1] &= ~(1 << 3);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
@@ -111,35 +114,35 @@ void PadFunc_Process(void)
         xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
-        static bool press = false;
-        if(press)
-        {
-            xosReport.button[0] = 0xff; 
-            xosReport.button[1] = 0xf3; 
-            xosReport.leftTrigger = 0xff; 
-            xosReport.rightTrigger = 0; 
+        //**************simulation************
+        // static bool press = false;
+        // if(press)
+        // {
+        //     xosReport.button[0] = 0xf6;
+        //     xosReport.button[1] = 0xf3;
+        //     xosReport.leftTrigger = 0xff;
+        //     xosReport.rightTrigger = 0;
 
-            xosReport.leftX = INT16_MAX;
-            xosReport.leftY = INT16_MAX;
+        //     xosReport.leftX = INT16_MAX;
+        //     xosReport.leftY = INT16_MAX;
 
-            xosReport.rightX = INT16_MAX;
-            xosReport.rightY = INT16_MAX;
-        }
-        else
-        {
-            xosReport.button[0] = 0; 
-            xosReport.button[1] = 0; 
-            xosReport.leftTrigger = 0; 
-            xosReport.rightTrigger = 0xff; 
+        //     xosReport.rightX = INT16_MAX;
+        //     xosReport.rightY = INT16_MAX;
+        // }
+        // else
+        // {
+        //     xosReport.button[0] = 0x09;
+        //     xosReport.button[1] = 0;
+        //     xosReport.leftTrigger = 0;
+        //     xosReport.rightTrigger = 0xff;
 
-            xosReport.leftX = INT16_MIN;
-            xosReport.leftY = INT16_MIN;
+        //     xosReport.leftX = INT16_MIN;
+        //     xosReport.leftY = INT16_MIN;
 
-            xosReport.rightX = INT16_MIN;
-            xosReport.rightY = INT16_MIN;
-        }
-
-        press = !press;
+        //     xosReport.rightX = INT16_MIN;
+        //     xosReport.rightY = INT16_MIN;
+        // }
+        // press = !press;
 
         USBD_SendXosReport(&hUsbDeviceFS, &xosReport);
     }
