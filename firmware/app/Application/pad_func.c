@@ -59,7 +59,7 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 5)
+    if (SysTimeSpan(lastTime) > 1000)
     {
         lastTime = GetSysTime();
 
@@ -110,6 +110,36 @@ void PadFunc_Process(void)
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
         xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
+
+        static bool press = false;
+        if(press)
+        {
+            xosReport.button[0] = 0xff; 
+            xosReport.button[1] = 0xf3; 
+            xosReport.leftTrigger = 0xff; 
+            xosReport.rightTrigger = 0; 
+
+            xosReport.leftX = INT16_MAX;
+            xosReport.leftY = INT16_MAX;
+
+            xosReport.rightX = INT16_MAX;
+            xosReport.rightY = INT16_MAX;
+        }
+        else
+        {
+            xosReport.button[0] = 0; 
+            xosReport.button[1] = 0; 
+            xosReport.leftTrigger = 0; 
+            xosReport.rightTrigger = 0xff; 
+
+            xosReport.leftX = INT16_MIN;
+            xosReport.leftY = INT16_MIN;
+
+            xosReport.rightX = INT16_MIN;
+            xosReport.rightY = INT16_MIN;
+        }
+
+        press = !press;
 
         USBD_SendXosReport(&hUsbDeviceFS, &xosReport);
     }
