@@ -148,7 +148,7 @@ void PadFunc_Process(void)
         // hall
         xosReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
-        xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
+        xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
         USBD_SendXosReport(&xosReport);
