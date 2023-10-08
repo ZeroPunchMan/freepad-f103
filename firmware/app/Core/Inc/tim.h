@@ -48,11 +48,11 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN Prototypes */
 typedef enum
 {
-  PwmChan_MotorLeftTop,
+  PwmChan_MotorLeftTop,  //360不支持
   PwmChan_MotorLeftBottom,
-  PwmChan_MotorRightBottom,
-  PwmChan_MotorRightTop,
-  PwmChan_XosLed,
+  PwmChan_MotorRightBottom, 
+  PwmChan_MotorRightTop, //360不支持
+  PwmChan_PadLed,
 } PwmChannel_t;
 void PwmSetDuty(PwmChannel_t chan, uint16_t duty);
 /* USER CODE END Prototypes */

@@ -47,6 +47,8 @@ EndBSPDependencies */
 #include "usbd_hid.h"
 #include "usbd_ctlreq.h"
 #include "cl_serialize.h"
+#include "cl_log.h"
+#include "pad_func.h"
 
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
@@ -170,7 +172,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_
   0x00,
 };
 
-__ALIGN_BEGIN static uint8_t endpoint_02_recv[32] __ALIGN_END;
+__ALIGN_BEGIN static uint8_t ep2RecvBuff[32] __ALIGN_END;
 
 /** @defgroup USBD_HID_Private_Functions
   * @{
@@ -213,7 +215,7 @@ static uint8_t  USBD_HID_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
     return USBD_FAIL;
   }
 
-  USBD_LL_PrepareReceive(pdev, 0x02, endpoint_02_recv, sizeof(endpoint_02_recv));
+  USBD_LL_PrepareReceive(pdev, 0x02, ep2RecvBuff, sizeof(ep2RecvBuff));
   ((USBD_HID_HandleTypeDef *)pdev->pClassData)->state = HID_IDLE;
 
   return USBD_OK;
@@ -385,7 +387,7 @@ static uint8_t  USBD_HID_Setup(USBD_HandleTypeDef *pdev,
   return ret;
 }
 
-void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
+void PadHidReportSerialize(uint8_t *buff, const PadReport_t *report)
 {
   buff[2] = report->button[0];
   buff[3] = report->button[1];
@@ -397,7 +399,7 @@ void XosHidReportSerialize(uint8_t *buff, const XosHidReport_t *report)
   CL_Int16ToBytes(report->rightY, buff + 12, CL_LittleEndian);
 }
 
-CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* report)
+CL_Result_t USBD_SendPadReport(USBD_HandleTypeDef *pdev, const PadReport_t* report)
 {
   USBD_HID_HandleTypeDef     *hhid = (USBD_HID_HandleTypeDef *)pdev->pClassData;
   if (pdev->dev_state == USBD_STATE_CONFIGURED)
@@ -408,7 +410,7 @@ CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* r
                                   0x00, 0x00, 0x00, 0x00, 0x00, 
                                   0x00, 0x00, 0x00, 0x00, 0x00, 
                                   0x00, 0x00, 0x00, 0x00, 0x00};
-      XosHidReportSerialize(inputReportData, report);
+      PadHidReportSerialize(inputReportData, report);
 
       hhid->state = HID_BUSY;
       USBD_LL_Transmit(pdev, 0x81, inputReportData, sizeof(inputReportData));
@@ -485,8 +487,23 @@ static uint8_t USBD_HID_DataOut(struct _USBD_HandleTypeDef *pdev, uint8_t epnum)
 {
     //if([0] == 0x00 && [1] == 0x08)
     //  [3] = left motor, [4] = right motor
-    // CL_LOG_LINE("out %x, %d", epnum, pdev->ep_out[2].total_length);
-    USBD_LL_PrepareReceive(pdev, 0x02, endpoint_02_recv, sizeof(endpoint_02_recv));
+    if(epnum == 2)
+    {
+      uint32_t len = USBD_LL_GetRxDataSize(pdev, 0x02);
+      if(ep2RecvBuff[0] == 0 && ep2RecvBuff[1] == 8)
+      {
+        SetPadVibration(PadVbrtIdx_LeftBottom, ep2RecvBuff[3]);
+        SetPadVibration(PadVbrtIdx_RightBottom, ep2RecvBuff[4]);
+      }
+      // CL_LOG("len: %u---", len);
+      // for(uint32_t i = 0; i < len; i++)
+      // {
+      //   CL_LOG("%d ", ep2RecvBuff[i]);
+      // }
+      // CL_LOG("\r\n");
+      //0 8 0 255 117 0 0 0    ..... 255=left; 117=right
+      USBD_LL_PrepareReceive(pdev, 0x02, ep2RecvBuff, sizeof(ep2RecvBuff));
+    }
     return USBD_OK;
 }
 

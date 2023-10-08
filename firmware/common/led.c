@@ -8,7 +8,7 @@ typedef void (*InitFunc)(void);
 typedef void (*SwitchFunc)(uint8_t brightness);
 
 static void McuStaLed_Switch(uint8_t brightness);
-static void XosLed_Switch(uint8_t brightness);
+static void PadLed_Switch(uint8_t brightness);
 
 typedef struct
 {
@@ -18,13 +18,13 @@ typedef struct
 
 typedef enum
 {
-    LedIdx_Xos,
+    LedIdx_Pad,
     LedIdx_McuStatus,
     LedIdx_Max,
 } LedIndex_t;
 
 const LedContext_t ledContext[LedIdx_Max] = {
-    [LedIdx_Xos] = {.initFunc = NULL, .switchFunc = XosLed_Switch},
+    [LedIdx_Pad] = {.initFunc = NULL, .switchFunc = PadLed_Switch},
     [LedIdx_McuStatus] = {.initFunc = NULL, .switchFunc = McuStaLed_Switch},
 };
 
@@ -36,37 +36,37 @@ static void McuStaLed_Switch(uint8_t brightness)
         LL_GPIO_ResetOutputPin(STA_LED_PROT, STA_LED_PIN);
 }
 
-static void XosLed_Switch(uint8_t brightness)
+static void PadLed_Switch(uint8_t brightness)
 {
-    PwmSetDuty(PwmChan_XosLed, brightness);
+    PwmSetDuty(PwmChan_PadLed, brightness);
 }
 
-//----------------xos led-----------------------------
-static XosLedStyle_t xosLedStyle = XosLedStyle_On;
-static uint8_t xosLedCurBn = 0;
-#define XOS_LED_MAX_BN (99)
-void XosLedProc(void)
+//----------------pad led-----------------------------
+static PadLedStyle_t padLedStyle = PadLedStyle_On;
+static uint8_t padLedCurBn = 0;
+#define PAD_LED_MAX_BN (99)
+void PadLedProc(void)
 {
     static uint32_t lastTime = 0;
-    switch (xosLedStyle)
+    switch (padLedStyle)
     {
-    case XosLedStyle_On:
-    case XosLedStyle_Off:
+    case PadLedStyle_On:
+    case PadLedStyle_Off:
         break;
-    case XosLedStyle_Blink:
+    case PadLedStyle_Blink:
         if (SysTimeSpan(lastTime) >= 500)
         {
             lastTime = GetSysTime();
 
-            if (xosLedCurBn)
-                xosLedCurBn = 0;
+            if (padLedCurBn)
+                padLedCurBn = 0;
             else
-                xosLedCurBn = XOS_LED_MAX_BN;
+                padLedCurBn = PAD_LED_MAX_BN;
 
-            ledContext[LedIdx_Xos].switchFunc(xosLedCurBn);
+            ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         }
         break;
-    case XosLedStyle_Breath:
+    case PadLedStyle_Breath:
         if (SysTimeSpan(lastTime) >= 30)
         {
             lastTime = GetSysTime();
@@ -74,45 +74,45 @@ void XosLedProc(void)
             static uint8_t dir = 1;
             if (dir)
             {
-                if (xosLedCurBn < 100)
-                    xosLedCurBn++;
-                if (xosLedCurBn >= 100)
+                if (padLedCurBn < 100)
+                    padLedCurBn++;
+                if (padLedCurBn >= 100)
                     dir = 0;
             }
             else
             {
-                if (xosLedCurBn > 0)
-                    xosLedCurBn--;
-                if (xosLedCurBn == 0)
+                if (padLedCurBn > 0)
+                    padLedCurBn--;
+                if (padLedCurBn == 0)
                     dir = 1;
             }
-            ledContext[LedIdx_Xos].switchFunc(xosLedCurBn);
+            ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         }
         break;
     default:
         break;
     }
 }
-void SetXosLedStyle(XosLedStyle_t style)
+void SetPadLedStyle(PadLedStyle_t style)
 {
     switch (style)
     {
-    case XosLedStyle_On:
-        xosLedCurBn = XOS_LED_MAX_BN;
-        ledContext[LedIdx_Xos].switchFunc(xosLedCurBn);
+    case PadLedStyle_On:
+        padLedCurBn = PAD_LED_MAX_BN;
+        ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         break;
-    case XosLedStyle_Off:
-        xosLedCurBn = 0;
-        ledContext[LedIdx_Xos].switchFunc(xosLedCurBn);
+    case PadLedStyle_Off:
+        padLedCurBn = 0;
+        ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         break;
-    case XosLedStyle_Blink:
+    case PadLedStyle_Blink:
         break;
-    case XosLedStyle_Breath:
+    case PadLedStyle_Breath:
         break;
     default:
         break;
     }
-    xosLedStyle = style;
+    padLedStyle = style;
 }
 //-----------------status led-------------------------
 static McuLedStyle_t mcuLedStyle = McuLedStyle_SlowBlink;

@@ -100,7 +100,7 @@ typedef struct
 CL_QUEUE_DEF_INIT(middleQueue, 20, MidVal_t, static);
 static void ToCaliMiddle(void)
 {
-    SetXosLedStyle(XosLedStyle_Breath);
+    SetPadLedStyle(PadLedStyle_Breath);
     CL_QueueClear(&middleQueue);
     caliStatus = CaliSta_Middle;
     CL_LOG_LINE("start cali middle");
@@ -121,7 +121,7 @@ static void ToCaliMargin(void)
     caliParams.leftTrigger[1] = 0;
     caliParams.rightTrigger[1] = 0;
 
-    SetXosLedStyle(XosLedStyle_Blink);
+    SetPadLedStyle(PadLedStyle_Blink);
     caliStatus = CaliSta_Margin;
     CL_LOG_LINE("start cali margin");
 }

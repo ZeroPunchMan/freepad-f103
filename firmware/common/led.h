@@ -20,10 +20,10 @@ void SetMcuLedStyle(McuLedStyle_t style);
 
 typedef enum
 {
-    XosLedStyle_On,
-    XosLedStyle_Off,
-    XosLedStyle_Blink,
-    XosLedStyle_Breath,
-} XosLedStyle_t;
+    PadLedStyle_On,
+    PadLedStyle_Off,
+    PadLedStyle_Blink,
+    PadLedStyle_Breath,
+} PadLedStyle_t;
 
-void SetXosLedStyle(XosLedStyle_t style);
+void SetPadLedStyle(PadLedStyle_t style);

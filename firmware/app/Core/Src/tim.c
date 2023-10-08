@@ -92,7 +92,7 @@ void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
-  PwmSetDuty(PwmChan_XosLed, 0);
+  PwmSetDuty(PwmChan_PadLed, 0);
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
 
@@ -294,7 +294,7 @@ void PwmSetDuty(PwmChannel_t chan, uint16_t duty)
   case PwmChan_MotorRightTop:
     __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, duty * 10);
     break;
-  case PwmChan_XosLed:
+  case PwmChan_PadLed:
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty * 10);
     break;
   }

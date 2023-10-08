@@ -11,7 +11,7 @@
 #include "usb_device.h"
 #include "usbd_hid.h"
 
-static XosHidReport_t xosReport = {
+static PadReport_t padReport = {
     .leftX = 0, // -32767 ~ 32767
     .leftY = 0,
 
@@ -25,17 +25,19 @@ static XosHidReport_t xosReport = {
     .button[1] = 0,
 };
 
+uint8_t vibration[PadVbrtIdx_Max] = {0};
+
 void PadFunc_Init(void)
 {
     Hc165Scan_Init();
     Cali_Init();
-    SetXosLedStyle(XosLedStyle_On);
+    SetPadLedStyle(PadLedStyle_On);
 }
 
 // button[0]: R3 L3 LM RM 右 左 下 上
 // button[1]: Y X B A RES XBOX RB LB
-static const uint8_t xosBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-static const uint8_t xosBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
+static const uint8_t padBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+static const uint8_t padBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
 
 static uint16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
 { // int16_t
@@ -71,94 +73,102 @@ void PadFunc_Process(void)
         uint16_t btnValue = CL_BytesToUint16(temp, CL_LittleEndian);
 
         // buttons
-        xosReport.button[0] = 0;
-        xosReport.button[1] = 0;
+        padReport.button[0] = 0;
+        padReport.button[1] = 0;
         for (int i = 0; i < 8; i++)
         {
-            if (btnValue & (1 << xosBtn0Offset[i]))
+            if (btnValue & (1 << padBtn0Offset[i]))
             {
-                xosReport.button[0] |= 1 << i;
+                padReport.button[0] |= 1 << i;
             }
 
-            if (btnValue & (1 << xosBtn1Offset[i]))
+            if (btnValue & (1 << padBtn1Offset[i]))
             {
-                xosReport.button[1] |= 1 << i;
+                padReport.button[1] |= 1 << i;
             }
         }
-        xosReport.button[1] &= ~(1 << 3);
+        padReport.button[1] &= ~(1 << 3);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
         // sticks
-        xosReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
+        padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
                                         caliParams->leftX[0],
                                         caliParams->leftX[1],
                                         caliParams->leftX[2]);
 
-        xosReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
+        padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
                                         caliParams->leftY[0],
                                         caliParams->leftY[1],
                                         caliParams->leftY[2]);
 
-        xosReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
+        padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
                                          caliParams->rightX[0],
                                          caliParams->rightX[1],
                                          caliParams->rightX[2]);
 
-        xosReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
+        padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
                                          caliParams->rightY[0],
                                          caliParams->rightY[1],
                                          caliParams->rightY[2]);
         // hall
-        xosReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
+        padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
-        xosReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
+        padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
         //**************simulation************
         // static bool press = false;
         // if(press)
         // {
-        //     xosReport.button[0] = 0xf6;
-        //     xosReport.button[1] = 0xf3;
-        //     xosReport.leftTrigger = 0xff;
-        //     xosReport.rightTrigger = 0;
+        //     padReport.button[0] = 0xf6;
+        //     padReport.button[1] = 0xf3;
+        //     padReport.leftTrigger = 0xff;
+        //     padReport.rightTrigger = 0;
 
-        //     xosReport.leftX = INT16_MAX;
-        //     xosReport.leftY = INT16_MAX;
+        //     padReport.leftX = INT16_MAX;
+        //     padReport.leftY = INT16_MAX;
 
-        //     xosReport.rightX = INT16_MAX;
-        //     xosReport.rightY = INT16_MAX;
+        //     padReport.rightX = INT16_MAX;
+        //     padReport.rightY = INT16_MAX;
         // }
         // else
         // {
-        //     xosReport.button[0] = 0x09;
-        //     xosReport.button[1] = 0;
-        //     xosReport.leftTrigger = 0;
-        //     xosReport.rightTrigger = 0xff;
+        //     padReport.button[0] = 0x09;
+        //     padReport.button[1] = 0;
+        //     padReport.leftTrigger = 0;
+        //     padReport.rightTrigger = 0xff;
 
-        //     xosReport.leftX = INT16_MIN;
-        //     xosReport.leftY = INT16_MIN;
+        //     padReport.leftX = INT16_MIN;
+        //     padReport.leftY = INT16_MIN;
 
-        //     xosReport.rightX = INT16_MIN;
-        //     xosReport.rightY = INT16_MIN;
+        //     padReport.rightX = INT16_MIN;
+        //     padReport.rightY = INT16_MIN;
         // }
         // press = !press;
 
-        USBD_SendXosReport(&hUsbDeviceFS, &xosReport);
+        USBD_SendPadReport(&hUsbDeviceFS, &padReport);
+
+        PwmSetDuty(PwmChan_MotorLeftBottom, vibration[PadVbrtIdx_LeftBottom] / 5);
+        PwmSetDuty(PwmChan_MotorRightBottom, vibration[PadVbrtIdx_RightBottom] / 5);
     }
 
     Cali_Process();
 }
 
-bool IsButtonPress(XosBtnIdx_t idx)
+void SetPadVibration(PadVbrtIdx_t idx, uint8_t vbrt)
+{
+    vibration[idx] = vbrt;
+}
+
+bool IsButtonPress(PadBtnIdx_t idx)
 {
     switch (idx)
     {
-    case XosBtnIdx_Pair:
-        return (xosReport.button[0] & (1 << 1)) != 0;
-    case XosBtnIdx_A:
-        return (xosReport.button[1] & (1 << 4)) != 0;
+    case PadBtnIdx_Pair:
+        return (padReport.button[0] & (1 << 1)) != 0;
+    case PadBtnIdx_A:
+        return (padReport.button[1] & (1 << 4)) != 0;
     }
     return false;
 }

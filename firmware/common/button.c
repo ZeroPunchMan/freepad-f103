@@ -18,12 +18,12 @@ typedef struct
 
 static inline bool IsPairPress(void)
 { 
-    return IsButtonPress(XosBtnIdx_Pair);
+    return IsButtonPress(PadBtnIdx_Pair);
 }
 
 static inline bool IsAPress(void)
 { 
-    return IsButtonPress(XosBtnIdx_A);
+    return IsButtonPress(PadBtnIdx_A);
 }
 
 const ButtonDef_t buttonDef[BtnIdx_Max] =

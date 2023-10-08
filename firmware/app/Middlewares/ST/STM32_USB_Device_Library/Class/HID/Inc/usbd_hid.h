@@ -88,7 +88,7 @@ typedef struct
   int16_t leftX, leftY, rightX, rightY;
   uint8_t leftTrigger, rightTrigger;
   uint8_t button[2];
-} XosHidReport_t;
+} PadReport_t;
 /**
   * @}
   */
@@ -118,7 +118,7 @@ extern USBD_ClassTypeDef  USBD_HID;
   */
 
 uint32_t USBD_HID_GetPollingInterval(USBD_HandleTypeDef *pdev);
-CL_Result_t USBD_SendXosReport(USBD_HandleTypeDef *pdev, const XosHidReport_t* report);
+CL_Result_t USBD_SendPadReport(USBD_HandleTypeDef *pdev, const PadReport_t* report);
 
 /**
   * @}
