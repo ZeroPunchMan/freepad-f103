@@ -135,7 +135,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -157,25 +157,30 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>98</LineNumber>
+          <LineNumber>69</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240424</Address>
+          <Address>134243988</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\common\led.c</Filename>
+          <Filename>..\Application\pad_func.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\app\../../common/led.c\98</Expression>
+          <Expression>\\app\../Application/pad_func.c\69</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>inputReportData</ItemText>
+          <ItemText>temp</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>btnValue</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

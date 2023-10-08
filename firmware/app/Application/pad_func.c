@@ -27,12 +27,13 @@ static XosHidReport_t xosReport = {
 
 void PadFunc_Init(void)
 {
+    Hc165Scan_Init();
     Cali_Init();
     SetXosLedStyle(XosLedStyle_On);
 }
 
 // button[0]: R3 L3 LM RM 右 左 下 上
-// button[1]: Y X B A RES XBOX RB LB 
+// button[1]: Y X B A RES XBOX RB LB
 static const uint8_t xosBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 static const uint8_t xosBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
 
@@ -61,7 +62,7 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 { // dmaCount
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1000) //todo interval
+    if (SysTimeSpan(lastTime) > 1000) // todo interval
     {
         lastTime = GetSysTime();
 
@@ -157,7 +158,7 @@ bool IsButtonPress(XosBtnIdx_t idx)
     case XosBtnIdx_Pair:
         return (xosReport.button[0] & (1 << 1)) != 0;
     case XosBtnIdx_A:
-        return (xosReport.button[0] & (1 << 5)) != 0;
+        return (xosReport.button[1] & (1 << 4)) != 0;
     }
     return false;
 }
