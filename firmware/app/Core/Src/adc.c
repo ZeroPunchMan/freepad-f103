@@ -124,7 +124,7 @@ void MX_ADC1_Init(void)
 
 
   LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_1,
-                         LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA), (uint32_t)adcResult, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+  LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA), (uint32_t)adcResult, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
   LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, CL_ARRAY_LENGTH(adcResult));
 
   // LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);

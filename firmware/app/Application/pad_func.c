@@ -10,6 +10,7 @@
 #include "cali.h"
 #include "usb_device.h"
 #include "usbd_hid.h"
+#include "math.h"
 
 static PadReport_t padReport = {
     .leftX = 0, // -32767 ~ 32767
@@ -39,7 +40,7 @@ void PadFunc_Init(void)
 static const uint8_t padBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 static const uint8_t padBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
 
-static uint16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
+static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
 { // int16_t
     if (adc < min)
         return INT16_MIN;
@@ -51,7 +52,7 @@ static uint16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint1
         return INT16_MAX;
 }
 
-static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
+static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 { // uint8_t
     if (adc < min)
         return 0;
@@ -62,7 +63,7 @@ static uint16_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 }
 
 void PadFunc_Process(void)
-{ // dmaCount
+{
     static uint32_t lastTime = 0;
     if (SysTimeSpan(lastTime) > 1000) // todo interval
     {
@@ -71,6 +72,11 @@ void PadFunc_Process(void)
         uint8_t temp[2];
         Hc165Scan(16, temp);
         uint16_t btnValue = CL_BytesToUint16(temp, CL_LittleEndian);
+
+        static uint8_t testOffset = 0;
+        testOffset++;
+        if (testOffset >= 16)
+            testOffset = 0;
 
         // buttons
         padReport.button[0] = 0;
@@ -87,7 +93,8 @@ void PadFunc_Process(void)
                 padReport.button[1] |= 1 << i;
             }
         }
-        padReport.button[1] &= ~(1 << 3);
+
+        // CL_LOG_LINE("button %04x: %02x, %02x", btnValue, padReport.button[0], padReport.button[1]);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
@@ -114,8 +121,16 @@ void PadFunc_Process(void)
         // hall
         padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
-        padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
+        padReport.rightTrigger = HallAdcToHid(testOffset*4096/16,//GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
+
+        CL_LOG_LINE("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+                    padReport.leftX,
+                    padReport.leftY,
+                    padReport.rightX,
+                    padReport.rightY,
+                    padReport.leftTrigger,
+                    padReport.rightTrigger);
 
         //**************simulation************
         // static bool press = false;
