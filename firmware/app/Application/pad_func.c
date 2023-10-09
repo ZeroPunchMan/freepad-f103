@@ -35,10 +35,10 @@ void PadFunc_Init(void)
     SetPadLedStyle(PadLedStyle_On);
 }
 
-// button[0]: R3 L3 LM RM 右 左 下 上
+// button[0]: R3 L3 LM RM 右 左 下 上 bit7~bit0
 // button[1]: Y X B A RES XBOX RB LB
-static const uint8_t padBtn0Offset[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-static const uint8_t padBtn1Offset[8] = {8, 9, 10, 11, 12, 13, 14, 15};
+static const uint8_t padBtn0Offset[8] = {11, 8, 10, 9, 6, 14, 12, 13};
+static const uint8_t padBtn1Offset[8] = {15, 7, 5, 4, 1, 0, 2, 3};
 
 static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
 { // int16_t
@@ -65,7 +65,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 {
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1000) // todo interval
+    if (SysTimeSpan(lastTime) > 1) // todo interval
     {
         lastTime = GetSysTime();
 
@@ -99,22 +99,22 @@ void PadFunc_Process(void)
         const CaliParams_t *caliParams = GetCaliParams();
 
         // sticks
-        padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
+        padReport.leftX = -StickAdcToHid(GetAdcResult(AdcChan_LeftX),
                                         caliParams->leftX[0],
                                         caliParams->leftX[1],
                                         caliParams->leftX[2]);
 
-        padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
+        padReport.leftY = -StickAdcToHid(GetAdcResult(AdcChan_LeftY),
                                         caliParams->leftY[0],
                                         caliParams->leftY[1],
                                         caliParams->leftY[2]);
 
-        padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
+        padReport.rightX = -StickAdcToHid(GetAdcResult(AdcChan_RightX),
                                          caliParams->rightX[0],
                                          caliParams->rightX[1],
                                          caliParams->rightX[2]);
 
-        padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
+        padReport.rightY = -StickAdcToHid(GetAdcResult(AdcChan_RightY),
                                          caliParams->rightY[0],
                                          caliParams->rightY[1],
                                          caliParams->rightY[2]);
@@ -123,14 +123,14 @@ void PadFunc_Process(void)
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
         padReport.rightTrigger = HallAdcToHid(testOffset*4096/16,//GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
-
-        CL_LOG_LINE("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
-                    padReport.leftX,
-                    padReport.leftY,
-                    padReport.rightX,
-                    padReport.rightY,
-                    padReport.leftTrigger,
-                    padReport.rightTrigger);
+                                              
+        // CL_LOG_LINE("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+        //             padReport.leftX,
+        //             padReport.leftY,
+        //             padReport.rightX,
+        //             padReport.rightY,
+        //             padReport.leftTrigger,
+        //             padReport.rightTrigger);
 
         //**************simulation************
         // static bool press = false;
@@ -181,7 +181,7 @@ bool IsButtonPress(PadBtnIdx_t idx)
     switch (idx)
     {
     case PadBtnIdx_Pair:
-        return (padReport.button[0] & (1 << 1)) != 0;
+        return (padReport.button[0] & (1 << 2)) != 0;
     case PadBtnIdx_A:
         return (padReport.button[1] & (1 << 4)) != 0;
     }
