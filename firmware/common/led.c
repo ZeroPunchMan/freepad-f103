@@ -44,7 +44,7 @@ static void PadLed_Switch(uint8_t brightness)
 //----------------pad led-----------------------------
 static PadLedStyle_t padLedStyle = PadLedStyle_On;
 static uint8_t padLedCurBn = 0;
-#define PAD_LED_MAX_BN (99)
+#define PAD_LED_MAX_BN (50)
 void PadLedProc(void)
 {
     static uint32_t lastTime = 0;
@@ -67,16 +67,20 @@ void PadLedProc(void)
         }
         break;
     case PadLedStyle_Breath:
-        if (SysTimeSpan(lastTime) >= 30)
+    {
+        uint32_t breathDelay = 10;
+        if(padLedCurBn < 20)
+            breathDelay += 50;
+        if (SysTimeSpan(lastTime) >= breathDelay)
         {
             lastTime = GetSysTime();
 
             static uint8_t dir = 1;
             if (dir)
             {
-                if (padLedCurBn < 100)
+                if (padLedCurBn < PAD_LED_MAX_BN)
                     padLedCurBn++;
-                if (padLedCurBn >= 100)
+                if (padLedCurBn >= PAD_LED_MAX_BN)
                     dir = 0;
             }
             else
@@ -88,6 +92,7 @@ void PadLedProc(void)
             }
             ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         }
+    }
         break;
     default:
         break;
@@ -156,4 +161,5 @@ void Led_Init(void)
 void Led_Process(void)
 {
     McuLedProc();
+    PadLedProc();
 }

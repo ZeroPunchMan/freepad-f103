@@ -32,11 +32,10 @@ void PadFunc_Init(void)
 {
     Hc165Scan_Init();
     Cali_Init();
-    SetPadLedStyle(PadLedStyle_On);
 }
 
 // button[0]: R3 L3 LM RM 右 左 下 上 bit7~bit0
-// button[1]: Y X B A RES XBOX RB LB
+// button[1]: Y X B A PAIR XBOX RB LB
 static const uint8_t padBtn0Offset[8] = {11, 8, 10, 9, 6, 14, 12, 13};
 static const uint8_t padBtn1Offset[8] = {15, 7, 5, 4, 1, 0, 2, 3};
 
@@ -98,6 +97,14 @@ void PadFunc_Process(void)
 
         const CaliParams_t *caliParams = GetCaliParams();
 
+        // CL_LOG_LINE("adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+        //             GetAdcResult(AdcChan_LeftX),
+        //             GetAdcResult(AdcChan_LeftY),
+        //             GetAdcResult(AdcChan_RightX),
+        //             GetAdcResult(AdcChan_RightY),
+        //             GetAdcResult(AdcChan_LeftHall),
+        //             GetAdcResult(AdcChan_RightHall));
+
         // sticks
         padReport.leftX = -StickAdcToHid(GetAdcResult(AdcChan_LeftX),
                                         caliParams->leftX[0],
@@ -121,9 +128,9 @@ void PadFunc_Process(void)
         // hall
         padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
-        padReport.rightTrigger = HallAdcToHid(testOffset*4096/16,//GetAdcResult(AdcChan_RightHall),
+        padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
-                                              
+
         // CL_LOG_LINE("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
         //             padReport.leftX,
         //             padReport.leftY,
@@ -181,7 +188,7 @@ bool IsButtonPress(PadBtnIdx_t idx)
     switch (idx)
     {
     case PadBtnIdx_Pair:
-        return (padReport.button[0] & (1 << 2)) != 0;
+        return (padReport.button[1] & (1 << 3)) != 0;
     case PadBtnIdx_A:
         return (padReport.button[1] & (1 << 4)) != 0;
     }

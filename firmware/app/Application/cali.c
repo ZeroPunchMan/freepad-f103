@@ -88,8 +88,10 @@ static CaliStatus_t caliStatus = CaliSta_None;
 
 static void ToCaliNone(void)
 {
+    SetPadLedStyle(PadLedStyle_On);
     caliStatus = CaliSta_None;
     CL_LOG_LINE("cali done");
+    PrintParams(&caliParams);
 }
 
 typedef struct
@@ -155,6 +157,7 @@ static bool OnBtnAEvent(void *eventArg)
 
 void Cali_Init(void)
 {
+    SetPadLedStyle(PadLedStyle_On);
     LoadCalibration();
     CL_EventSysAddListener(OnBtnPairEvent, CL_Event_Button, BtnIdx_Pair);
     CL_EventSysAddListener(OnBtnAEvent, CL_Event_Button, BtnIdx_A);
@@ -245,26 +248,20 @@ static void MiddleProc(void)
 static void MarginProc(void)
 {
     // 记录摇杆的最大最小值,扳机的最大值
-    static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) >= 5)
-    {
-        lastTime = GetSysTime();
+    caliParams.leftX[0] = CL_MIN(caliParams.leftX[0], GetAdcResult(AdcChan_LeftX));
+    caliParams.leftX[2] = CL_MAX(caliParams.leftX[2], GetAdcResult(AdcChan_LeftX));
 
-        caliParams.leftX[0] = CL_MIN(caliParams.leftX[0], GetAdcResult(AdcChan_LeftX));
-        caliParams.leftX[2] = CL_MAX(caliParams.leftX[2], GetAdcResult(AdcChan_LeftX));
+    caliParams.leftY[0] = CL_MIN(caliParams.leftY[0], GetAdcResult(AdcChan_LeftY));
+    caliParams.leftY[2] = CL_MAX(caliParams.leftY[2], GetAdcResult(AdcChan_LeftY));
 
-        caliParams.leftY[0] = CL_MIN(caliParams.leftY[0], GetAdcResult(AdcChan_LeftY));
-        caliParams.leftY[2] = CL_MAX(caliParams.leftY[2], GetAdcResult(AdcChan_LeftY));
+    caliParams.rightX[0] = CL_MIN(caliParams.rightX[0], GetAdcResult(AdcChan_RightX));
+    caliParams.rightX[2] = CL_MAX(caliParams.rightX[2], GetAdcResult(AdcChan_RightX));
 
-        caliParams.rightX[0] = CL_MIN(caliParams.rightX[0], GetAdcResult(AdcChan_RightX));
-        caliParams.rightX[2] = CL_MAX(caliParams.rightX[2], GetAdcResult(AdcChan_RightX));
+    caliParams.rightY[0] = CL_MIN(caliParams.rightY[0], GetAdcResult(AdcChan_RightY));
+    caliParams.rightY[2] = CL_MAX(caliParams.rightY[2], GetAdcResult(AdcChan_RightY));
 
-        caliParams.rightY[0] = CL_MIN(caliParams.rightY[0], GetAdcResult(AdcChan_RightY));
-        caliParams.rightY[2] = CL_MAX(caliParams.rightY[2], GetAdcResult(AdcChan_RightY));
-
-        caliParams.leftTrigger[1] = CL_MAX(caliParams.leftTrigger[1], GetAdcResult(AdcChan_LeftHall));
-        caliParams.rightTrigger[1] = CL_MAX(caliParams.rightTrigger[1], GetAdcResult(AdcChan_RightHall));
-    }
+    caliParams.leftTrigger[1] = CL_MAX(caliParams.leftTrigger[1], GetAdcResult(AdcChan_LeftHall));
+    caliParams.rightTrigger[1] = CL_MAX(caliParams.rightTrigger[1], GetAdcResult(AdcChan_RightHall));
 }
 
 void Cali_Process(void)
