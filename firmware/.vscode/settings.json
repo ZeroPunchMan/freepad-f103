@@ -44,6 +44,8 @@
         "corecrt_math.h": "c",
         "corecrt_math_defines.h": "c",
         "corecrt.h": "c",
-        "usbd_hid.h": "c"
+        "usbd_hid.h": "c",
+        "usb_device.h": "c",
+        "board.h": "c"
     }
 }
