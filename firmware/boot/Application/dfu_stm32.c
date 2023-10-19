@@ -46,7 +46,7 @@ CL_Result_t SaveAppInfo(uint32_t addr, uint32_t size)
 bool IsAppValid(void)
 {
     const AppInfo_t *pInfo = (const AppInfo_t *)DFU_APP_INFO_ADDR;
-	
+
     if (pInfo->size > APP_MAX_SIZE)
         return false;
 
@@ -69,8 +69,8 @@ CL_Result_t WriteFlash(uint32_t addr, const uint8_t *buff, uint32_t length)
 bool NeedDfu(void)
 {
     LL_APB2_GRP1_EnableClock(GPIO_APB);
-    Mmhl_GpioInit(DFU_BTN_PORT, DFU_BTN_PIN, LL_GPIO_MODE_INPUT);
-    if (Mmhl_GpioReadInput(DFU_BTN_PORT, DFU_BTN_PIN) == 0)
+    Mmhl_GpioInit(BTN_PAIR_PORT, BTN_PAIR_PIN, LL_GPIO_MODE_INPUT, LL_GPIO_PULL_DOWN);
+    if (Mmhl_GpioReadInput(BTN_PAIR_PORT, BTN_PAIR_PIN) == 0)
         return true;
 
     return false;

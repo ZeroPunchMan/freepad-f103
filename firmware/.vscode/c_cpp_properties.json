@@ -10,7 +10,8 @@
                 "${workspaceFolder}/boot/Crypto/include",
                 "${workspaceFolder}/app/Core/Inc",
                 "${workspaceFolder}/app/Application",
-                "${workspaceFolder}/app/Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc"
+                "${workspaceFolder}/app/Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc",
+                "${workspaceFolder}/boot/Application"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",
