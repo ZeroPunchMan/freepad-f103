@@ -3,7 +3,6 @@
 #include "cl_log.h"
 #include "adc.h"
 #include "systime.h"
-#include "hc165scan.h"
 #include "cl_serialize.h"
 #include "tim.h"
 #include "led.h"
@@ -30,14 +29,11 @@ uint8_t vibration[PadVbrtIdx_Max] = {0};
 
 void PadFunc_Init(void)
 {
-    Hc165Scan_Init();
     Cali_Init();
 }
 
 // button[0]: R3 L3 LM RM 右 左 下 上 bit7~bit0
 // button[1]: Y X B A PAIR XBOX RB LB
-static const uint8_t padBtn0Offset[8] = {11, 8, 10, 9, 6, 14, 12, 13};
-static const uint8_t padBtn1Offset[8] = {15, 7, 5, 4, 1, 0, 2, 3};
 
 static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
 { // int16_t
@@ -68,30 +64,10 @@ void PadFunc_Process(void)
     {
         lastTime = GetSysTime();
 
-        uint8_t temp[2];
-        Hc165Scan(16, temp);
-        uint16_t btnValue = CL_BytesToUint16(temp, CL_LittleEndian);
-
-        static uint8_t testOffset = 0;
-        testOffset++;
-        if (testOffset >= 16)
-            testOffset = 0;
-
         // buttons
         padReport.button[0] = 0;
         padReport.button[1] = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            if (btnValue & (1 << padBtn0Offset[i]))
-            {
-                padReport.button[0] |= 1 << i;
-            }
-
-            if (btnValue & (1 << padBtn1Offset[i]))
-            {
-                padReport.button[1] |= 1 << i;
-            }
-        }
+        //todo check button
 
         // CL_LOG_LINE("button %04x: %02x, %02x", btnValue, padReport.button[0], padReport.button[1]);
 
@@ -171,8 +147,8 @@ void PadFunc_Process(void)
 
         USBD_SendPadReport(&hUsbDeviceFS, &padReport);
 
-        PwmSetDuty(PwmChan_MotorLeftBottom, vibration[PadVbrtIdx_LeftBottom] / 5);
-        PwmSetDuty(PwmChan_MotorRightBottom, vibration[PadVbrtIdx_RightBottom] / 5);
+        PwmSetDuty(PwmChan_MotorLeft, vibration[PadVbrtIdx_LeftBottom] / 5);
+        PwmSetDuty(PwmChan_MotorRight, vibration[PadVbrtIdx_RightBottom] / 5);
     }
 
     Cali_Process();
