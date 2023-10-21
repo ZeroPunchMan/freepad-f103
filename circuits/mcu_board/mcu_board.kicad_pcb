@@ -173,7 +173,7 @@
 
   (footprint "button:click_lbrb" (layer "F.Cu")
     (tstamp 108ac62c-382c-45cd-a0ec-0ccd61d32b44)
-    (at 177.4 89.6 -40)
+    (at 175.9 91.2 -40)
     (property "Sheetfile" "mcu_board.kicad_sch")
     (property "Sheetname" "")
     (property "ki_description" "Push button switch, generic, two pins")
@@ -661,7 +661,7 @@
 
   (footprint "button:click_pair" (layer "F.Cu")
     (tstamp 67b08d1d-931f-422e-afb5-b65deff2956c)
-    (at 148.5 83.1 180)
+    (at 148.5 83 180)
     (property "Sheetfile" "mcu_board.kicad_sch")
     (property "Sheetname" "")
     (property "ki_description" "Push button switch, generic, two pins")
@@ -1095,7 +1095,7 @@
 
   (footprint "button:click_lbrb" (layer "F.Cu")
     (tstamp ea5a9fa3-cf67-420c-84c4-52c9c1060021)
-    (at 147 92.1 40)
+    (at 145.6 91.2 40)
     (property "Sheetfile" "mcu_board.kicad_sch")
     (property "Sheetname" "")
     (property "ki_description" "Push button switch, generic, two pins")
