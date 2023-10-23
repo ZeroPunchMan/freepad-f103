@@ -29,20 +29,20 @@
 #define BTN_RMENU_PORT (GPIOB)
 #define BTN_RMENU_PIN (LL_GPIO_PIN_6)
 
-#define BTN_Y_PORT (GPIOB)
-#define BTN_Y_PIN (LL_GPIO_PIN_7)
-
 #define BTN_X_PORT (GPIOB)
-#define BTN_X_PIN (LL_GPIO_PIN_8)
+#define BTN_X_PIN (LL_GPIO_PIN_7)
+
+#define BTN_Y_PORT (GPIOB)
+#define BTN_Y_PIN (LL_GPIO_PIN_8)
 
 #define BTN_A_PORT (GPIOB)
 #define BTN_A_PIN (LL_GPIO_PIN_9)
 
-#define BTN_DOWN_PORT (GPIOB)
-#define BTN_DOWN_PIN (LL_GPIO_PIN_10)
-
 #define BTN_RIGHT_PORT (GPIOB)
-#define BTN_RIGHT_PIN (LL_GPIO_PIN_11)
+#define BTN_RIGHT_PIN (LL_GPIO_PIN_10)
+
+#define BTN_DOWN_PORT (GPIOB)
+#define BTN_DOWN_PIN (LL_GPIO_PIN_11)
 
 #define BTN_UP_PORT (GPIOB)
 #define BTN_UP_PIN (LL_GPIO_PIN_12)
