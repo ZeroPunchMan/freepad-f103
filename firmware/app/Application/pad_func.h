@@ -13,10 +13,4 @@ typedef enum
 } PadVbrtIdx_t;
 void SetPadVibration(PadVbrtIdx_t idx, uint8_t vbrt);
 
-typedef enum
-{
-    PadBtnIdx_Pair,
-    PadBtnIdx_A,
-} PadBtnIdx_t;
 
-bool IsButtonPress(PadBtnIdx_t);

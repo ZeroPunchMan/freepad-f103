@@ -91,7 +91,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 {
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1) 
+    if (SysTimeSpan(lastTime) > 1000) 
     {
         lastTime = GetSysTime();
 
@@ -111,7 +111,7 @@ void PadFunc_Process(void)
                 padReport.button[1] |= 1 << i;
         }
 
-        // CL_LOG_LINE("button %04x: %02x, %02x", btnValue, padReport.button[0], padReport.button[1]);
+        CL_LOG_LINE("button: %02x, %02x", padReport.button[0], padReport.button[1]);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
@@ -201,14 +201,3 @@ void SetPadVibration(PadVbrtIdx_t idx, uint8_t vbrt)
     vibration[idx] = vbrt;
 }
 
-bool IsButtonPress(PadBtnIdx_t idx)
-{
-    switch (idx)
-    {
-    case PadBtnIdx_Pair:
-        return LL_GPIO_IsInputPinSet(GPIOB, LL_GPIO_PIN_15);
-    case PadBtnIdx_A:
-        return LL_GPIO_IsInputPinSet(GPIOB, LL_GPIO_PIN_9);
-    }
-    return false;
-}

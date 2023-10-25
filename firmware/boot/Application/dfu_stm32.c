@@ -70,7 +70,7 @@ bool NeedDfu(void)
 {
     LL_APB2_GRP1_EnableClock(GPIO_APB);
     Mmhl_GpioInit(BTN_PAIR_PORT, BTN_PAIR_PIN, LL_GPIO_MODE_INPUT, LL_GPIO_PULL_DOWN);
-    if (Mmhl_GpioReadInput(BTN_PAIR_PORT, BTN_PAIR_PIN) == 0)
+    if (Mmhl_GpioReadInput(BTN_PAIR_PORT, BTN_PAIR_PIN) == 1)
         return true;
 
     return false;

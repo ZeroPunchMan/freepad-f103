@@ -18,12 +18,12 @@ typedef struct
 
 static inline bool IsPairPress(void)
 { 
-    return IsButtonPress(PadBtnIdx_Pair);
+    return LL_GPIO_IsInputPinSet(BTN_PAIR_PORT, BTN_PAIR_PIN);
 }
 
 static inline bool IsAPress(void)
 { 
-    return IsButtonPress(PadBtnIdx_A);
+    return LL_GPIO_IsInputPinSet(BTN_A_PORT, BTN_A_PIN);
 }
 
 const ButtonDef_t buttonDef[BtnIdx_Max] =

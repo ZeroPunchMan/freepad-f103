@@ -138,13 +138,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) >= 500)
+    if (SysTimeSpan(lastTime) >= 1000)
     {
       lastTime = GetSysTime();
-      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-      // CL_LOG_LINE("app2: %us", lastTime / 1000);
-
-      // SendHidTestReport();
+      CL_LOG_LINE("app2: %us", lastTime / 1000);
     }
   }
   /* USER CODE END 3 */
