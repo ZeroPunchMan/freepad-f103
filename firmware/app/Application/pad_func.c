@@ -91,7 +91,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 {
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) > 1000) 
+    if (SysTimeSpan(lastTime) >= 1) 
     {
         lastTime = GetSysTime();
 
@@ -111,7 +111,7 @@ void PadFunc_Process(void)
                 padReport.button[1] |= 1 << i;
         }
 
-        CL_LOG_LINE("button: %02x, %02x", padReport.button[0], padReport.button[1]);
+        // CL_LOG_LINE("button: %02x, %02x", padReport.button[0], padReport.button[1]);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
@@ -124,22 +124,22 @@ void PadFunc_Process(void)
         //             GetAdcResult(AdcChan_RightHall));
 
         // sticks
-        padReport.leftX = -StickAdcToHid(GetAdcResult(AdcChan_LeftX),
+        padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
                                          caliParams->leftX[0],
                                          caliParams->leftX[1],
                                          caliParams->leftX[2]);
 
-        padReport.leftY = -StickAdcToHid(GetAdcResult(AdcChan_LeftY),
+        padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
                                          caliParams->leftY[0],
                                          caliParams->leftY[1],
                                          caliParams->leftY[2]);
 
-        padReport.rightX = -StickAdcToHid(GetAdcResult(AdcChan_RightX),
+        padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
                                           caliParams->rightX[0],
                                           caliParams->rightX[1],
                                           caliParams->rightX[2]);
 
-        padReport.rightY = -StickAdcToHid(GetAdcResult(AdcChan_RightY),
+        padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
                                           caliParams->rightY[0],
                                           caliParams->rightY[1],
                                           caliParams->rightY[2]);

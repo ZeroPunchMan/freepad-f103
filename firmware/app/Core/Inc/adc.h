@@ -35,12 +35,12 @@ extern "C" {
 /* USER CODE BEGIN Private defines */
 typedef enum
 {
-  AdcChan_LeftY = 0,
-  AdcChan_LeftX,
-  AdcChan_RightY,
+  AdcChan_RightHall = 0,
   AdcChan_RightX,
+  AdcChan_RightY,
   AdcChan_LeftHall,
-  AdcChan_RightHall,
+  AdcChan_LeftX,
+  AdcChan_LeftY,
 } AdcChannel_t;
 /* USER CODE END Private defines */
 
