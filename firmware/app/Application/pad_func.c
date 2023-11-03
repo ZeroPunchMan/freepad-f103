@@ -189,7 +189,7 @@ void PadFunc_Process(void)
 
         USBD_SendPadReport(&hUsbDeviceFS, &padReport);
 
-        PwmSetDuty(PwmChan_MotorLeft, vibration[PadVbrtIdx_LeftBottom] / 5);
+        PwmSetDuty(PwmChan_MotorLeft, vibration[PadVbrtIdx_LeftBottom] / 5); //原始值0~255,不要超100
         PwmSetDuty(PwmChan_MotorRight, vibration[PadVbrtIdx_RightBottom] / 5);
     }
 

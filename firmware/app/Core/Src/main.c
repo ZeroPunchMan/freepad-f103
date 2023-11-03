@@ -141,7 +141,7 @@ int main(void)
     if (SysTimeSpan(lastTime) >= 1000)
     {
       lastTime = GetSysTime();
-      CL_LOG_LINE("app2: %us", lastTime / 1000);
+      // CL_LOG_LINE("app2: %us", lastTime / 1000);
     }
   }
   /* USER CODE END 3 */
