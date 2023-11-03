@@ -6,6 +6,7 @@ typedef enum
 {
     BtnIdx_Pair = 0,
     BtnIdx_A,
+    BtnIdx_Y,
     BtnIdx_Max,
 } ButtonIdx_t;
 

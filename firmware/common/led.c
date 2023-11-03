@@ -54,7 +54,7 @@ void PadLedProc(void)
     case PadLedStyle_Off:
         break;
     case PadLedStyle_Blink:
-        if (SysTimeSpan(lastTime) >= 500)
+        if (SysTimeSpan(lastTime) >= 200)
         {
             lastTime = GetSysTime();
 
