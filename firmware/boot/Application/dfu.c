@@ -16,6 +16,7 @@
 static inline void ToggleLed(void)
 {
     LL_GPIO_TogglePin(STA_LED_PROT, STA_LED_PIN);
+    LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_8);
 }
 
 extern const FirmwareInfo_t bootFwInfo;
