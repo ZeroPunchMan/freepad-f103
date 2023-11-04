@@ -91,7 +91,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 {
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) >= 1) 
+    if (SysTimeSpan(lastTime) >= 1)
     {
         lastTime = GetSysTime();
 
@@ -125,24 +125,24 @@ void PadFunc_Process(void)
 
         // sticks
         padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
-                                         caliParams->leftX[0],
-                                         caliParams->leftX[1],
-                                         caliParams->leftX[2]);
+                                        caliParams->leftX[0],
+                                        caliParams->leftX[1],
+                                        caliParams->leftX[2]);
 
         padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
-                                         caliParams->leftY[0],
-                                         caliParams->leftY[1],
-                                         caliParams->leftY[2]);
+                                        caliParams->leftY[0],
+                                        caliParams->leftY[1],
+                                        caliParams->leftY[2]);
 
         padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
-                                          caliParams->rightX[0],
-                                          caliParams->rightX[1],
-                                          caliParams->rightX[2]);
+                                         caliParams->rightX[0],
+                                         caliParams->rightX[1],
+                                         caliParams->rightX[2]);
 
         padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
-                                          caliParams->rightY[0],
-                                          caliParams->rightY[1],
-                                          caliParams->rightY[2]);
+                                         caliParams->rightY[0],
+                                         caliParams->rightY[1],
+                                         caliParams->rightY[2]);
         // hall
         padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                              caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
@@ -189,8 +189,8 @@ void PadFunc_Process(void)
 
         USBD_SendPadReport(&hUsbDeviceFS, &padReport);
 
-        PwmSetDuty(PwmChan_MotorLeft, vibration[PadVbrtIdx_LeftBottom] / 5); //原始值0~255,不要超100
-        PwmSetDuty(PwmChan_MotorRight, vibration[PadVbrtIdx_RightBottom] / 5);
+        PwmSetDuty(PwmChan_MotorLeft, vibration[PadVbrtIdx_LeftBottom]);
+        PwmSetDuty(PwmChan_MotorRight, vibration[PadVbrtIdx_RightBottom]);
     }
 
     Cali_Process();
@@ -198,6 +198,14 @@ void PadFunc_Process(void)
 
 void SetPadVibration(PadVbrtIdx_t idx, uint8_t vbrt)
 {
-    vibration[idx] = vbrt;
+    // 原始值0~255,不要超100
+    if (vbrt > 0)
+    {
+        vbrt = CL_CLAMP(vbrt, 0, 250);
+        vibration[idx] = vbrt / 5 + 50;
+    }
+    else
+    {
+        vibration[idx] = 0;
+    }
 }
-
