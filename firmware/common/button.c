@@ -26,6 +26,11 @@ static inline bool IsAPress(void)
     return LL_GPIO_IsInputPinSet(BTN_A_PORT, BTN_A_PIN);
 }
 
+static inline bool IsYPress(void)
+{
+    return LL_GPIO_IsInputPinSet(BTN_Y_PORT, BTN_Y_PIN);
+}
+
 const ButtonDef_t buttonDef[BtnIdx_Max] =
     {
         [BtnIdx_Pair] = {
@@ -33,6 +38,9 @@ const ButtonDef_t buttonDef[BtnIdx_Max] =
         },
         [BtnIdx_A] = {
             .getPress = IsAPress,
+        },
+        [BtnIdx_Y] = {
+            .getPress = IsYPress,
         },
 };
 
@@ -130,7 +138,7 @@ void Button_Process(void)
                     bc->downTime += span;
                 }
                 else
-                { // 松开
+                { // 长按松开
                     bc->downTime = 0;
                     bc->status = BtnSta_Up;
                     // CL_LOG_LINE("button up");

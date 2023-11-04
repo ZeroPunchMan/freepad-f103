@@ -33,6 +33,31 @@ static void PrintParams(CaliParams_t *params)
     CL_LOG_LINE("----------");
 }
 
+static void ResetParams(void)
+{
+    caliParams.leftX[0] = 0;
+    caliParams.leftX[1] = 2048;
+    caliParams.leftX[2] = 4096;
+
+    caliParams.leftY[0] = 0;
+    caliParams.leftY[1] = 2048;
+    caliParams.leftY[2] = 4096;
+
+    caliParams.rightX[0] = 0;
+    caliParams.rightX[1] = 2048;
+    caliParams.rightX[2] = 4096;
+
+    caliParams.rightY[0] = 0;
+    caliParams.rightY[1] = 2048;
+    caliParams.rightY[2] = 4096;
+
+    caliParams.leftTrigger[0] = 0;
+    caliParams.leftTrigger[1] = 4096;
+
+    caliParams.rightTrigger[0] = 0;
+    caliParams.rightTrigger[1] = 4096;
+}
+
 static void LoadCalibration(void)
 {
     memcpy((void *)&caliParams, (void *)PAD_PARAM_ADDR, sizeof(caliParams));
@@ -40,27 +65,7 @@ static void LoadCalibration(void)
     if (crc != caliParams.crc)
     { // use default params
         CL_LOG_LINE("use default params");
-        caliParams.leftX[0] = 0;
-        caliParams.leftX[1] = 2048;
-        caliParams.leftX[2] = 4096;
-
-        caliParams.leftY[0] = 0;
-        caliParams.leftY[1] = 2048;
-        caliParams.leftY[2] = 4096;
-
-        caliParams.rightX[0] = 0;
-        caliParams.rightX[1] = 2048;
-        caliParams.rightX[2] = 4096;
-
-        caliParams.rightY[0] = 0;
-        caliParams.rightY[1] = 2048;
-        caliParams.rightY[2] = 4096;
-
-        caliParams.leftTrigger[0] = 0;
-        caliParams.leftTrigger[1] = 4096;
-
-        caliParams.rightTrigger[0] = 0;
-        caliParams.rightTrigger[1] = 4096;
+        ResetParams();
     }
     else
     {
@@ -155,12 +160,28 @@ static bool OnBtnAEvent(void *eventArg)
     return true;
 }
 
+static bool OnBtnYEvent(void *eventArg)
+{ // Y长按,参数复位
+    ButtonEvent_t *pEvt = (ButtonEvent_t *)eventArg;
+    if (pEvt[0] == ButtonEvent_LongPress)
+    {
+        if (caliStatus == CaliSta_Margin)
+        {
+            ResetParams();
+            SaveCalibration();
+            ToCaliNone();
+        }
+    }
+    return true;
+}
+
 void Cali_Init(void)
 {
     SetPadLedStyle(PadLedStyle_On);
     LoadCalibration();
     CL_EventSysAddListener(OnBtnPairEvent, CL_Event_Button, BtnIdx_Pair);
     CL_EventSysAddListener(OnBtnAEvent, CL_Event_Button, BtnIdx_A);
+    CL_EventSysAddListener(OnBtnYEvent, CL_Event_Button, BtnIdx_Y);
 }
 
 #define MID_MAX_DIFF (50)
