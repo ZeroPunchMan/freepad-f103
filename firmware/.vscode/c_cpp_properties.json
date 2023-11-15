@@ -24,7 +24,8 @@
                 "uint8_t=unsigned char",
                 "int8_t=char",
                 "__ALIGN_BEGIN=",
-                "__STATIC_INLINE=static inline"
+                "__STATIC_INLINE=static inline",
+                "__attribute__(x)="
             ],
             "windowsSdkVersion": "10.0.22000.0",
             "compilerPath": "cl.exe",

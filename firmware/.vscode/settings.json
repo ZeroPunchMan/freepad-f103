@@ -46,6 +46,7 @@
         "corecrt.h": "c",
         "usbd_hid.h": "c",
         "usb_device.h": "c",
-        "board.h": "c"
+        "board.h": "c",
+        "firmware_info.h": "c"
     }
 }
