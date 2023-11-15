@@ -3,6 +3,7 @@
 #include "cl_common.h"
 
 #define PRODUCT_BOOT_STR "FREEPADDFU"
+#define PRODUCT_APP_STR "FREEPADAPP"
 
 typedef struct 
 {

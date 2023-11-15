@@ -193,6 +193,20 @@ static void OnRecvBootVerReq(void)
     CL_LOG_LINE("send boot version");
 }
 
+static void OnRecvAppVerReq(void)
+{
+    const FirmwareInfo_t* pAppInfo = (const FirmwareInfo_t*)0x8013800;
+    uint8_t data[14];
+    memcpy(data, PRODUCT_APP_STR, 10);
+    data[10] = pAppInfo->verMajor;
+    data[11] = pAppInfo->verMinor;
+    CL_Uint16ToBytes(pAppInfo->verPatch, data + 12, CL_BigEndian);
+
+    Comm_SendMsg(SpgCmd_Dfu, SgpSubCmd_AppVerRsp, data, sizeof(data));
+
+    CL_LOG_LINE("send boot version");
+}
+
 void OnRecvDfuRequest(const SgpPacket_t *pack)
 {
     if (dfuContext.status == DfuStatus_WaitReq)
@@ -311,6 +325,9 @@ static bool OnRecvSgpMsg(void *eventArg)
             break;
         case SgpSubCmd_DfuBootVer:
             OnRecvBootVerReq();
+            break;
+        case SgpSubCmd_AppVer:
+            OnRecvAppVerReq();
             break;
         }
     }
