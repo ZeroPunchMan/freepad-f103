@@ -81,7 +81,6 @@ static void UsbFakePlug(void)
   HAL_Delay(100);
   LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_12);
 }
-void SendHidTestReport(void);
 /* USER CODE END 0 */
 
 /**
