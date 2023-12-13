@@ -69,7 +69,7 @@ void PadLedProc(void)
     case PadLedStyle_Breath:
     {
         uint32_t breathDelay = 10;
-        if(padLedCurBn < 20)
+        if (padLedCurBn < 20)
             breathDelay += 50;
         if (SysTimeSpan(lastTime) >= breathDelay)
         {
@@ -93,7 +93,7 @@ void PadLedProc(void)
             ledContext[LedIdx_Pad].switchFunc(padLedCurBn);
         }
     }
-        break;
+    break;
     default:
         break;
     }
@@ -140,7 +140,7 @@ void McuLedProc(void)
         ledOn = !ledOn;
         ledContext[LedIdx_McuStatus].switchFunc(ledOn);
 
-        // CL_LOG_LINE("ble led: %d", ledOn);
+        CL_LOG_INFO(LED, "ble led: %d", ledOn);
     }
 }
 

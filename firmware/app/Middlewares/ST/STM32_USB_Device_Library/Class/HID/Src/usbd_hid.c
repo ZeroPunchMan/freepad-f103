@@ -495,12 +495,12 @@ static uint8_t USBD_HID_DataOut(struct _USBD_HandleTypeDef *pdev, uint8_t epnum)
         SetPadVibration(PadVbrtIdx_LeftBottom, ep2RecvBuff[3]);
         SetPadVibration(PadVbrtIdx_RightBottom, ep2RecvBuff[4]);
       }
-      // CL_LOG("len: %u---", len);
+      // CL_LOG_INFO(USB,"len: %u---", len);
       // for(uint32_t i = 0; i < len; i++)
       // {
-      //   CL_LOG("%d ", ep2RecvBuff[i]);
+      //   CL_LOG_INFO(USB,"%d ", ep2RecvBuff[i]);
       // }
-      // CL_LOG("\r\n");
+      // CL_LOG_INFO(USB,"\r\n");
       //0 8 0 255 117 0 0 0    ..... 255=left; 117=right
       USBD_LL_PrepareReceive(pdev, 0x02, ep2RecvBuff, sizeof(ep2RecvBuff));
     }

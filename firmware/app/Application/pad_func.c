@@ -111,17 +111,17 @@ void PadFunc_Process(void)
                 padReport.button[1] |= 1 << i;
         }
 
-        // CL_LOG_LINE("button: %02x, %02x", padReport.button[0], padReport.button[1]);
+        CL_LOG_INFO(PAD,"button: %02x, %02x", padReport.button[0], padReport.button[1]);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
-        // CL_LOG_LINE("adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
-        //             GetAdcResult(AdcChan_LeftX),
-        //             GetAdcResult(AdcChan_LeftY),
-        //             GetAdcResult(AdcChan_RightX),
-        //             GetAdcResult(AdcChan_RightY),
-        //             GetAdcResult(AdcChan_LeftHall),
-        //             GetAdcResult(AdcChan_RightHall));
+        CL_LOG_INFO(PAD,"adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+                    GetAdcResult(AdcChan_LeftX),
+                    GetAdcResult(AdcChan_LeftY),
+                    GetAdcResult(AdcChan_RightX),
+                    GetAdcResult(AdcChan_RightY),
+                    GetAdcResult(AdcChan_LeftHall),
+                    GetAdcResult(AdcChan_RightHall));
 
         // sticks
         padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
@@ -149,13 +149,13 @@ void PadFunc_Process(void)
         padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
-        // CL_LOG_LINE("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
-        //             padReport.leftX,
-        //             padReport.leftY,
-        //             padReport.rightX,
-        //             padReport.rightY,
-        //             padReport.leftTrigger,
-        //             padReport.rightTrigger);
+        CL_LOG_INFO(PAD,"left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+                    padReport.leftX,
+                    padReport.leftY,
+                    padReport.rightX,
+                    padReport.rightY,
+                    padReport.leftTrigger,
+                    padReport.rightTrigger);
 
         //**************simulation************
         // static bool press = false;
