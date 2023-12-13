@@ -21,16 +21,16 @@ const CaliParams_t *GetCaliParams(void)
 
 static void PrintParams(CaliParams_t *params)
 {
-    CL_LOG_INFO(CALI,"**********");
-    CL_LOG_INFO(CALI,"cali params:");
-    CL_LOG_INFO(CALI,"left x: %d, %d, %d", caliParams.leftX[0], caliParams.leftX[1], caliParams.leftX[2]);
-    CL_LOG_INFO(CALI,"left y: %d, %d, %d", caliParams.leftY[0], caliParams.leftY[1], caliParams.leftY[2]);
-    CL_LOG_INFO(CALI,"left trigger: %d, %d", caliParams.leftTrigger[0], caliParams.leftTrigger[1]);
+    CL_LOG_INFO(CALI,"**********\r\n");
+    CL_LOG_INFO(CALI,"cali params:\r\n");
+    CL_LOG_INFO(CALI,"left x: %d, %d, %d\r\n", caliParams.leftX[0], caliParams.leftX[1], caliParams.leftX[2]);
+    CL_LOG_INFO(CALI,"left y: %d, %d, %d\r\n", caliParams.leftY[0], caliParams.leftY[1], caliParams.leftY[2]);
+    CL_LOG_INFO(CALI,"left trigger: %d, %d\r\n", caliParams.leftTrigger[0], caliParams.leftTrigger[1]);
 
-    CL_LOG_INFO(CALI,"right x: %d, %d, %d", caliParams.rightX[0], caliParams.rightX[1], caliParams.rightX[2]);
-    CL_LOG_INFO(CALI,"right y: %d, %d, %d", caliParams.rightY[0], caliParams.rightY[1], caliParams.rightY[2]);
-    CL_LOG_INFO(CALI,"right trigger: %d, %d", caliParams.rightTrigger[0], caliParams.rightTrigger[1]);
-    CL_LOG_INFO(CALI,"----------");
+    CL_LOG_INFO(CALI,"right x: %d, %d, %d\r\n", caliParams.rightX[0], caliParams.rightX[1], caliParams.rightX[2]);
+    CL_LOG_INFO(CALI,"right y: %d, %d, %d\r\n", caliParams.rightY[0], caliParams.rightY[1], caliParams.rightY[2]);
+    CL_LOG_INFO(CALI,"right trigger: %d, %d\r\n", caliParams.rightTrigger[0], caliParams.rightTrigger[1]);
+    CL_LOG_INFO(CALI,"----------\r\n");
 }
 
 static void ResetParams(void)
@@ -64,12 +64,12 @@ static void LoadCalibration(void)
     uint32_t crc = Ethernet_CRC32((const uint8_t *)&caliParams, CL_OFFSET_OF(CaliParams_t, crc));
     if (crc != caliParams.crc)
     { // use default params
-        CL_LOG_INFO(CALI,"use default params");
+        CL_LOG_INFO(CALI,"use default params\r\n");
         ResetParams();
     }
     else
     {
-        CL_LOG_INFO(CALI,"use saved params");
+        CL_LOG_INFO(CALI,"use saved params\r\n");
         PrintParams(&caliParams);
     }
 }
@@ -95,7 +95,7 @@ static void ToCaliNone(void)
 {
     SetPadLedStyle(PadLedStyle_On);
     caliStatus = CaliSta_None;
-    CL_LOG_INFO(CALI,"cali done");
+    CL_LOG_INFO(CALI,"cali done\r\n");
     PrintParams(&caliParams);
 }
 
@@ -110,7 +110,7 @@ static void ToCaliMiddle(void)
     SetPadLedStyle(PadLedStyle_Breath);
     CL_QueueClear(&middleQueue);
     caliStatus = CaliSta_Middle;
-    CL_LOG_INFO(CALI,"start cali middle");
+    CL_LOG_INFO(CALI,"start cali middle\r\n");
 }
 
 static void ToCaliMargin(void)
@@ -130,7 +130,7 @@ static void ToCaliMargin(void)
 
     SetPadLedStyle(PadLedStyle_Blink);
     caliStatus = CaliSta_Margin;
-    CL_LOG_INFO(CALI,"start cali margin");
+    CL_LOG_INFO(CALI,"start cali margin\r\n");
 }
 
 static bool OnBtnPairEvent(void *eventArg)
@@ -253,7 +253,7 @@ static void MiddleProc(void)
                 caliParams.leftTrigger[0] = (min.leftHall + max.leftHall) / 2;
                 caliParams.rightTrigger[0] = (min.rightHall + max.rightHall) / 2;
 
-                CL_LOG_INFO(CALI,"middle: %d, %d, %d, %d, %d, %d",
+                CL_LOG_INFO(CALI,"middle: %d, %d, %d, %d, %d, %d\r\n",
                             caliParams.leftX[1],
                             caliParams.leftY[1],
                             caliParams.rightX[1],

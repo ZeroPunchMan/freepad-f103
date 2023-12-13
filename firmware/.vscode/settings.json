@@ -12,10 +12,11 @@
         "common/clib/.gitignore": true,
         "common/clib/Makefile": true,
         "common/mmlib/testcase": true,
-        "app": true,
-        // "boot": true,
+        // "app": true,
+        "boot": true,
     },
     "files.associations": {
+        
         "cl_queue.h": "c",
         "systime.h": "c",
         "cl_common.h": "c",

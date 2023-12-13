@@ -111,11 +111,11 @@ void PadFunc_Process(void)
                 padReport.button[1] |= 1 << i;
         }
 
-        CL_LOG_INFO(PAD,"button: %02x, %02x", padReport.button[0], padReport.button[1]);
+        CL_LOG_INFO(PAD,"button: %02x, %02x\r\n", padReport.button[0], padReport.button[1]);
 
         const CaliParams_t *caliParams = GetCaliParams();
 
-        CL_LOG_INFO(PAD,"adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+        CL_LOG_INFO(PAD,"adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;\r\n",
                     GetAdcResult(AdcChan_LeftX),
                     GetAdcResult(AdcChan_LeftY),
                     GetAdcResult(AdcChan_RightX),
@@ -149,7 +149,7 @@ void PadFunc_Process(void)
         padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
                                               caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
 
-        CL_LOG_INFO(PAD,"left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
+        CL_LOG_INFO(PAD,"left: %d,%d; right: %d,%d; lt: %d; rt: %d;\r\n",
                     padReport.leftX,
                     padReport.leftY,
                     padReport.rightX,

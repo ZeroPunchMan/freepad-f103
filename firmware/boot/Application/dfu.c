@@ -110,12 +110,12 @@ void Dfu_Process(void)
     case DfuStatus_Idle:
         if (NeedDfu())
         {
-            CL_LOG_INFO(DFU, "need dfu, to wait dfu request");
+            CL_LOG_INFO(DFU, "need dfu, to wait dfu request\r\n");
             ToWaitReq();
         }
         else
         {
-            CL_LOG_INFO(DFU, "don't need dfu, to check app");
+            CL_LOG_INFO(DFU, "don't need dfu, to check app\r\n");
             ToCheckApp();
         }
         break;
@@ -140,12 +140,12 @@ void Dfu_Process(void)
     case DfuStatus_CheckApp:
         if (IsAppValid())
         {
-            CL_LOG_INFO(DFU, "app valid, prepare to jump");
+            CL_LOG_INFO(DFU, "app valid, prepare to jump\r\n");
             ToJump();
         }
         else
         {
-            CL_LOG_INFO(DFU, "no valid app, need dfu");
+            CL_LOG_INFO(DFU, "no valid app, need dfu\r\n");
             ToWaitReq();
         }
         break;
@@ -190,7 +190,7 @@ static void OnRecvBootVerReq(void)
 
     Comm_SendMsg(SpgCmd_Dfu, SgpSubCmd_DfuBootVerRsp, data, sizeof(data));
 
-    CL_LOG_INFO(DFU, "send boot version");
+    CL_LOG_INFO(DFU, "send boot version\r\n");
 }
 
 static void OnRecvAppVerReq(void)
@@ -204,7 +204,7 @@ static void OnRecvAppVerReq(void)
 
     Comm_SendMsg(SpgCmd_Dfu, SgpSubCmd_AppVerRsp, data, sizeof(data));
 
-    CL_LOG_INFO(DFU, "send boot version");
+    CL_LOG_INFO(DFU, "send boot version\r\n");
 }
 
 void OnRecvDfuRequest(const SgpPacket_t *pack)
@@ -213,13 +213,13 @@ void OnRecvDfuRequest(const SgpPacket_t *pack)
     {
         if (pack->length != 4)
         {
-            CL_LOG_INFO(DFU, "dfu req pack len error");
+            CL_LOG_INFO(DFU, "dfu req pack len error\r\n");
             return;
         }
         uint32_t fileSize = CL_BytesToUint32(pack->data, CL_BigEndian);
         if (fileSize > APP_MAX_SIZE || fileSize == 0)
         {
-            CL_LOG_INFO(DFU, "dfu file length error");
+            CL_LOG_INFO(DFU, "dfu file length error\r\n");
             return;
         }
         HAL_FLASH_Unlock();
@@ -256,13 +256,13 @@ static void OnRecvDfuData(const SgpPacket_t *pack)
             ToggleLed();
             CL_Result_t res = WriteFlash(APP_START_ADDR + dfuContext.recvSize, pack->data + 2, bytesInPack);
             dfuContext.recvSize += bytesInPack;
-            CL_LOG_INFO(DFU, "dfu pack: %hu--%hu, recv size: %u", packCount, bytesInPack, dfuContext.recvSize);
+            CL_LOG_INFO(DFU, "dfu pack: %hu--%hu, recv size: %u\r\n", packCount, bytesInPack, dfuContext.recvSize);
             SendDfuDataRsp(packCount, res == CL_ResSuccess ? 1 : 0);
             SetLastCommTime();
         }
         else if (dfuContext.packCount == (packCount + 1) && dfuContext.packCount > 0)
         {
-            CL_LOG_INFO(DFU, "rsp last pack");
+            CL_LOG_INFO(DFU, "rsp last pack\r\n");
             SendDfuDataRsp(packCount, 1);
             SetLastCommTime();
         }
@@ -295,12 +295,12 @@ static void OnRecvDfuVerify(const SgpPacket_t *pack)
         if (res == CL_ResSuccess)
         {
             SaveAppInfo(APP_START_ADDR, dfuContext.fileSize);
-            CL_LOG_INFO(DFU, "dfu verity ok");
+            CL_LOG_INFO(DFU, "dfu verity ok\r\n");
         }
         else
         {
             rsp = 0;
-            CL_LOG_INFO(DFU, "dfu verity failed");
+            CL_LOG_INFO(DFU, "dfu verity failed\r\n");
         }
         SendDfuVerifyRsp(rsp);
         ToCheckApp();
