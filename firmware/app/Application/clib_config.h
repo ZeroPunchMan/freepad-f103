@@ -29,6 +29,7 @@ extern "C"
 #define CL_LOG_APP_ENABLED (0)
 #define CL_LOG_USB_ENABLED (0)
 #define CL_LOG_BUTTON_ENABLED (0)
+#define CL_LOG_LED_ENABLED (0)
 #define CL_LOG_SGP_ENABLED (0)
 
 #ifdef __cplusplus
