@@ -136,8 +136,8 @@ int main(void)
     if (SysTimeSpan(lastTime) >= SYSTIME_SECOND(1))
     {
       lastTime = GetSysTime();
-      // CL_LOG_LINE("%us", lastTime / 1000);
-      CL_LOG_LINE("btn: %d", LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_15));
+      CL_LOG_INFO(DFU, "%us", lastTime / 1000);
+      CL_LOG_INFO(DFU, "btn: %d", LL_GPIO_IsInputPinSet(GPIOC, LL_GPIO_PIN_15));
     }
   }
   /* USER CODE END 3 */
