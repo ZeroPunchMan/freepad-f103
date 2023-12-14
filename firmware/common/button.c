@@ -99,7 +99,7 @@ void Button_Process(void)
                 if (bc->downTime >= BUTTON_BOUNCE_TIME)
                 { // 持续超过去抖时间,按键改为按下状态
                     bc->status = BtnSta_Press;
-                    CL_LOG_INFO(BUTTON,"button down\r\n");
+                    CL_LOG_INFO("button down");
                     ButtonEvent_t arg = ButtonEvent_Down;
                     CL_EventSysRaise(CL_Event_Button, i, &arg);
                 }
@@ -115,7 +115,7 @@ void Button_Process(void)
                     bc->downTime = 0;
                     bc->status = BtnSta_Up;
                     // 短按事件
-                    CL_LOG_INFO(BUTTON,"button %d click\r\n", i);
+                    CL_LOG_INFO("button %d click", i);
                     
                     ButtonEvent_t arg = ButtonEvent_Click;
                     CL_EventSysRaise(CL_Event_Button, i, &arg);
@@ -124,7 +124,7 @@ void Button_Process(void)
                 if (bc->downTime >= BUTTON_LONG_PRESS_TIME)
                 {
                     bc->status = BtnSta_LongPress;
-                    CL_LOG_INFO(BUTTON,"button %d long press\r\n", i);
+                    CL_LOG_INFO("button %d long press", i);
 
                     // 长按事件
                     ButtonEvent_t arg = ButtonEvent_LongPress;
@@ -141,7 +141,7 @@ void Button_Process(void)
                 { // 长按松开
                     bc->downTime = 0;
                     bc->status = BtnSta_Up;
-                    CL_LOG_INFO(BUTTON,"button up\r\n");
+                    CL_LOG_INFO("button up");
                     ButtonEvent_t arg = ButtonEvent_LpUp;
                     CL_EventSysRaise(CL_Event_Button, i, &arg);
                 }
