@@ -479,7 +479,10 @@ static uint8_t  USBD_HID_DataIn(USBD_HandleTypeDef *pdev,
 
   /* Ensure that the FIFO is empty before a new transfer, this condition could
   be caused by  a new transfer before the end of the previous transfer */
-  ((USBD_HID_HandleTypeDef *)pdev->pClassData)->state = HID_IDLE;
+  if((epnum & 0x7f) == 0x01)
+  {
+    ((USBD_HID_HandleTypeDef *)pdev->pClassData)->state = HID_IDLE;
+  }
   return USBD_OK;
 }
 
