@@ -88,7 +88,8 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
     { // 三次方插值
         uint16_t total = max - min;
         float ratio = (float)(adc - min) / total;
-        ratio = cbrt(ratio);
+        ratio = sqrt(ratio);
+        // ratio = cbrt(ratio);
         return ratio * 255;
     }
     else
