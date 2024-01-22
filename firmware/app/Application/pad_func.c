@@ -81,11 +81,20 @@ static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16
 static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 { // uint8_t
     if (adc < min)
+    {
         return 0;
+    }
     else if (adc < max)
-        return (adc - min) * 255 / (max - min);
+    { // 三次方插值
+        uint16_t total = max - min;
+        float ratio = (float)(adc - min) / total;
+        ratio = cbrt(ratio);
+        return ratio * 255;
+    }
     else
+    {
         return 255;
+    }
 }
 
 void PadFunc_Process(void)
@@ -113,79 +122,44 @@ void PadFunc_Process(void)
 
         // CL_LOG_INFO("button: %02x, %02x", padReport.button[0], padReport.button[1]);
 
-        const CaliParams_t *caliParams = GetCaliParams();
+        if (GetCaliStatus() == CaliSta_None)
+        {
+            const CaliParams_t *caliParams = GetCaliParams();
+            // sticks
+            padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
+                                            caliParams->leftX[0],
+                                            caliParams->leftX[1],
+                                            caliParams->leftX[2]);
 
-        // CL_LOG_INFO("adc left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
-        //             GetAdcResult(AdcChan_LeftX),
-        //             GetAdcResult(AdcChan_LeftY),
-        //             GetAdcResult(AdcChan_RightX),
-        //             GetAdcResult(AdcChan_RightY),
-        //             GetAdcResult(AdcChan_LeftHall),
-        //             GetAdcResult(AdcChan_RightHall));
+            padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
+                                            caliParams->leftY[0],
+                                            caliParams->leftY[1],
+                                            caliParams->leftY[2]);
 
-        // sticks
-        padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
-                                        caliParams->leftX[0],
-                                        caliParams->leftX[1],
-                                        caliParams->leftX[2]);
+            padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
+                                             caliParams->rightX[0],
+                                             caliParams->rightX[1],
+                                             caliParams->rightX[2]);
 
-        padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
-                                        caliParams->leftY[0],
-                                        caliParams->leftY[1],
-                                        caliParams->leftY[2]);
-
-        padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
-                                         caliParams->rightX[0],
-                                         caliParams->rightX[1],
-                                         caliParams->rightX[2]);
-
-        padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
-                                         caliParams->rightY[0],
-                                         caliParams->rightY[1],
-                                         caliParams->rightY[2]);
-        // hall
-        padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
-                                             caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
-        padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
-                                              caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
-
-        // CL_LOG_INFO("left: %d,%d; right: %d,%d; lt: %d; rt: %d;",
-        //             padReport.leftX,
-        //             padReport.leftY,
-        //             padReport.rightX,
-        //             padReport.rightY,
-        //             padReport.leftTrigger,
-        //             padReport.rightTrigger);
-
-        //**************simulation************
-        // static bool press = false;
-        // if(press)
-        // {
-        //     padReport.button[0] = 0xf6;
-        //     padReport.button[1] = 0xf3;
-        //     padReport.leftTrigger = 0xff;
-        //     padReport.rightTrigger = 0;
-
-        //     padReport.leftX = INT16_MAX;
-        //     padReport.leftY = INT16_MAX;
-
-        //     padReport.rightX = INT16_MAX;
-        //     padReport.rightY = INT16_MAX;
-        // }
-        // else
-        // {
-        //     padReport.button[0] = 0x09;
-        //     padReport.button[1] = 0;
-        //     padReport.leftTrigger = 0;
-        //     padReport.rightTrigger = 0xff;
-
-        //     padReport.leftX = INT16_MIN;
-        //     padReport.leftY = INT16_MIN;
-
-        //     padReport.rightX = INT16_MIN;
-        //     padReport.rightY = INT16_MIN;
-        // }
-        // press = !press;
+            padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
+                                             caliParams->rightY[0],
+                                             caliParams->rightY[1],
+                                             caliParams->rightY[2]);
+            // hall
+            padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
+                                                 caliParams->leftTrigger[0], caliParams->leftTrigger[1]);
+            padReport.rightTrigger = HallAdcToHid(GetAdcResult(AdcChan_RightHall),
+                                                  caliParams->rightTrigger[0], caliParams->rightTrigger[1]);
+        }
+        else
+        {
+            padReport.leftX = 0;
+            padReport.leftY = 0;
+            padReport.rightX = 0;
+            padReport.rightY = 0;
+            padReport.leftTrigger = 0;
+            padReport.rightTrigger = 0;
+        }
 
         USBD_SendPadReport(&hUsbDeviceFS, &padReport);
 

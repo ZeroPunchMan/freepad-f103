@@ -83,12 +83,6 @@ static void SaveCalibration(void)
     HAL_FLASH_Lock();
 }
 
-typedef enum
-{
-    CaliSta_None,   // 正常模式
-    CaliSta_Middle, // 校准中间值
-    CaliSta_Margin, // 校准边界值
-} CaliStatus_t;
 static CaliStatus_t caliStatus = CaliSta_None;
 
 static void ToCaliNone(void)
@@ -299,3 +293,9 @@ void Cali_Process(void)
         break;
     }
 }
+
+CaliStatus_t GetCaliStatus(void)
+{
+    return caliStatus;
+}
+

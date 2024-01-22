@@ -2,6 +2,13 @@
 
 #include "cl_common.h"
 
+typedef enum
+{
+    CaliSta_None,   // 正常模式
+    CaliSta_Middle, // 校准中间值
+    CaliSta_Margin, // 校准边界值
+} CaliStatus_t;
+
 typedef struct
 {
     uint16_t leftX[3], leftY[3];              // min,middle,max
@@ -10,10 +17,11 @@ typedef struct
     uint32_t crc;
 } CaliParams_t;
 
-
 void Cali_Init(void);
 void Cali_Process(void);
 const CaliParams_t* GetCaliParams(void);
+
+CaliStatus_t GetCaliStatus(void);
 
 //校准流程
 //1.长按pair键,进入校准中间值状态,led改为呼吸灯效果
