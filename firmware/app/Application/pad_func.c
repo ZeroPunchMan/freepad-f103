@@ -75,14 +75,14 @@ static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16
     else if (adc < middle)
     {
         float ratio = (float)(middle - adc) / (middle - min);
-        ratio = sqrt(ratio);
+        // ratio = sqrt(ratio);
         // ratio = cbrt(ratio);
         return ratio * INT16_MIN;
     }
     else if (adc < max)
     {
         float ratio = (float)(adc - middle) / (max - middle);
-        ratio = sqrt(ratio);
+        // ratio = sqrt(ratio);
         // ratio = cbrt(ratio);
         return ratio * INT16_MAX;
     }
@@ -99,7 +99,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
         return 0;
     }
     else if (adc < max)
-    { // 三次方插值
+    { // 平方根插值
         uint16_t total = max - min;
         float ratio = (float)(adc - min) / total;
         ratio = sqrt(ratio);
@@ -168,12 +168,12 @@ void PadFunc_Process(void)
         }
         else
         {
-            padReport.leftX = 0;
-            padReport.leftY = 0;
-            padReport.rightX = 0;
-            padReport.rightY = 0;
-            padReport.leftTrigger = 0;
-            padReport.rightTrigger = 0;
+            padReport.leftX = ((int16_t)GetAdcResult(AdcChan_LeftX) - 2048) / 2048.0f * 32768;
+            padReport.leftY = ((int16_t)GetAdcResult(AdcChan_LeftY) - 2048) / 2048.0f * 32768;
+            padReport.rightX = ((int16_t)GetAdcResult(AdcChan_RightX) - 2048) / 2048.0f * 32768;
+            padReport.rightY = ((int16_t)GetAdcResult(AdcChan_RightY) - 2048) / 2048.0f * 32768;
+            padReport.leftTrigger = GetAdcResult(AdcChan_LeftHall) / 16;
+            padReport.rightTrigger = GetAdcResult(AdcChan_RightHall) / 16;
         }
 
         USBD_SendPadReport(&hUsbDeviceFS, &padReport);
