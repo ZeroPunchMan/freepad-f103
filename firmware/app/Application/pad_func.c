@@ -69,13 +69,27 @@ static inline bool IsButtonPressed(GPIO_TypeDef *port, uint32_t pin)
 static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
 { // int16_t
     if (adc < min)
+    {
         return INT16_MIN;
+    }
     else if (adc < middle)
-        return (middle - adc) * INT16_MIN / (middle - min);
+    {
+        float ratio = (float)(middle - adc) / (middle - min);
+        ratio = sqrt(ratio);
+        // ratio = cbrt(ratio);
+        return ratio * INT16_MIN;
+    }
     else if (adc < max)
-        return (adc - middle) * INT16_MAX / (max - middle);
+    {
+        float ratio = (float)(adc - middle) / (max - middle);
+        ratio = sqrt(ratio);
+        // ratio = cbrt(ratio);
+        return ratio * INT16_MAX;
+    }
     else
+    {
         return INT16_MAX;
+    }
 }
 
 static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
