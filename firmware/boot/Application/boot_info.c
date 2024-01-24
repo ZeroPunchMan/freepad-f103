@@ -1,9 +1,9 @@
 #include "firmware_info.h"
 #include "flash_layout.h"
 
-#define MAJOR_VER_NUMBER (1)
-#define MINOR_VER_NUMBER (2)
-#define PATCH_VER_NUMBER (3456)
+#define MAJOR_VER_NUMBER (0)
+#define MINOR_VER_NUMBER (0)
+#define PATCH_VER_NUMBER (1)
 
 const FirmwareInfo_t bootFwInfo = {
     .verMajor = MAJOR_VER_NUMBER,
