@@ -100,6 +100,9 @@ void PadLedProc(void)
 }
 void SetPadLedStyle(PadLedStyle_t style)
 {
+    if (padLedStyle == style)
+        return;
+        
     switch (style)
     {
     case PadLedStyle_On:

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_LL_DRIVER,USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../USB_DEVICE/App;../USB_DEVICE/Target;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../../common/clib/inc;../../common/mmlib/inc;../../common;../Application;../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../USB_DEVICE/App;../USB_DEVICE/Target;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../../common/clib/inc;../../common/mmlib/inc;../../common;../Application;../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc;..\..\common\cmathex\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1771,6 +1771,16 @@
               <FileName>app_info.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Application\app_info.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cmathex</GroupName>
+          <Files>
+            <File>
+              <FileName>vector2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\cmathex\src\vector2.c</FilePath>
             </File>
           </Files>
         </Group>

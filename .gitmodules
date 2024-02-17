@@ -4,3 +4,6 @@
 [submodule "firmware/common/mmlib"]
 	path = firmware/common/mmlib
 	url = https://github.com/ZeroPunchMan/mmlib.git
+[submodule "firmware/common/cmathex"]
+	path = firmware/common/cmathex
+	url = https://github.com/ZeroPunchMan/cmathex.git

@@ -16,7 +16,6 @@
         "boot": true,
     },
     "files.associations": {
-        
         "cl_queue.h": "c",
         "systime.h": "c",
         "cl_common.h": "c",
@@ -48,6 +47,8 @@
         "usbd_hid.h": "c",
         "usb_device.h": "c",
         "board.h": "c",
-        "firmware_info.h": "c"
+        "firmware_info.h": "c",
+        "mathex.h": "c",
+        "vector2.h": "c"
     }
 }

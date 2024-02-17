@@ -11,6 +11,7 @@
 #include "usbd_hid.h"
 #include "math.h"
 #include "board.h"
+#include "vector2.h"
 
 static PadReport_t padReport = {
     .leftX = 0, // -32767 ~ 32767
@@ -66,31 +67,31 @@ static inline bool IsButtonPressed(GPIO_TypeDef *port, uint32_t pin)
     return LL_GPIO_IsInputPinSet(port, pin);
 }
 
-static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
-{ // int16_t
-    if (adc < min)
-    {
-        return INT16_MIN;
-    }
-    else if (adc < middle)
-    {
-        float ratio = (float)(middle - adc) / (middle - min);
-        // ratio = sqrt(ratio);
-        // ratio = cbrt(ratio);
-        return ratio * INT16_MIN;
-    }
-    else if (adc < max)
-    {
-        float ratio = (float)(adc - middle) / (max - middle);
-        // ratio = sqrt(ratio);
-        // ratio = cbrt(ratio);
-        return ratio * INT16_MAX;
-    }
-    else
-    {
-        return INT16_MAX;
-    }
-}
+// static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
+// { // int16_t
+//     if (adc < min)
+//     {
+//         return INT16_MIN;
+//     }
+//     else if (adc < middle)
+//     {
+//         float ratio = (float)(middle - adc) / (middle - min);
+//         // ratio = sqrt(ratio);
+//         // ratio = cbrt(ratio);
+//         return ratio * INT16_MIN;
+//     }
+//     else if (adc < max)
+//     {
+//         float ratio = (float)(adc - middle) / (max - middle);
+//         // ratio = sqrt(ratio);
+//         // ratio = cbrt(ratio);
+//         return ratio * INT16_MAX;
+//     }
+//     else
+//     {
+//         return INT16_MAX;
+//     }
+// }
 
 static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 { // uint8_t
@@ -141,25 +142,20 @@ void PadFunc_Process(void)
         {
             const CaliParams_t *caliParams = GetCaliParams();
             // sticks
-            padReport.leftX = StickAdcToHid(GetAdcResult(AdcChan_LeftX),
-                                            caliParams->leftX[0],
-                                            caliParams->leftX[1],
-                                            caliParams->leftX[2]);
+            Vector2 leftStick, rightStick;
+            leftStick.x = GetAdcResult(AdcChan_LeftX);
+            leftStick.y = GetAdcResult(AdcChan_LeftY);
+            StickCorrect(&leftStick, true);
 
-            padReport.leftY = StickAdcToHid(GetAdcResult(AdcChan_LeftY),
-                                            caliParams->leftY[0],
-                                            caliParams->leftY[1],
-                                            caliParams->leftY[2]);
+            padReport.leftX = leftStick.x;
+            padReport.leftY = leftStick.y;
 
-            padReport.rightX = StickAdcToHid(GetAdcResult(AdcChan_RightX),
-                                             caliParams->rightX[0],
-                                             caliParams->rightX[1],
-                                             caliParams->rightX[2]);
+            rightStick.x = GetAdcResult(AdcChan_RightX);
+            rightStick.y = GetAdcResult(AdcChan_RightY);
+            StickCorrect(&leftStick, false);
 
-            padReport.rightY = StickAdcToHid(GetAdcResult(AdcChan_RightY),
-                                             caliParams->rightY[0],
-                                             caliParams->rightY[1],
-                                             caliParams->rightY[2]);
+            padReport.rightX = rightStick.x;
+            padReport.rightY = rightStick.y;
             // hall
             padReport.leftTrigger = HallAdcToHid(GetAdcResult(AdcChan_LeftHall),
                                                  caliParams->leftTrigger[0], caliParams->leftTrigger[1]);

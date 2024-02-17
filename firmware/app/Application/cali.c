@@ -11,6 +11,9 @@
 #include "cl_queue.h"
 #include "systime.h"
 #include "adc.h"
+#include "mathex.h"
+
+static float GetRadian(const Vector2 *v);
 
 static CaliParams_t caliParams = {0};
 
@@ -23,33 +26,26 @@ static void PrintParams(CaliParams_t *params)
 {
     CL_LOG_INFO("**********");
     CL_LOG_INFO("cali params:");
-    CL_LOG_INFO("left x: %d, %d, %d", caliParams.leftX[0], caliParams.leftX[1], caliParams.leftX[2]);
-    CL_LOG_INFO("left y: %d, %d, %d", caliParams.leftY[0], caliParams.leftY[1], caliParams.leftY[2]);
     CL_LOG_INFO("left trigger: %d, %d", caliParams.leftTrigger[0], caliParams.leftTrigger[1]);
-
-    CL_LOG_INFO("right x: %d, %d, %d", caliParams.rightX[0], caliParams.rightX[1], caliParams.rightX[2]);
-    CL_LOG_INFO("right y: %d, %d, %d", caliParams.rightY[0], caliParams.rightY[1], caliParams.rightY[2]);
     CL_LOG_INFO("right trigger: %d, %d", caliParams.rightTrigger[0], caliParams.rightTrigger[1]);
     CL_LOG_INFO("----------");
 }
 
 static void ResetParams(void)
 {
-    caliParams.leftX[0] = 0;
-    caliParams.leftX[1] = 2048;
-    caliParams.leftX[2] = 4096;
+    caliParams.leftMidX = 2048;
+    caliParams.leftMidY = 2048;
+    for (int i = 0; i < CL_ARRAY_LENGTH(caliParams.leftMag); i++)
+    {
+        caliParams.leftMag[i] = 2048;
+    }
 
-    caliParams.leftY[0] = 0;
-    caliParams.leftY[1] = 2048;
-    caliParams.leftY[2] = 4096;
-
-    caliParams.rightX[0] = 0;
-    caliParams.rightX[1] = 2048;
-    caliParams.rightX[2] = 4096;
-
-    caliParams.rightY[0] = 0;
-    caliParams.rightY[1] = 2048;
-    caliParams.rightY[2] = 4096;
+    caliParams.rightMidX = 2048;
+    caliParams.rightMidY = 2048;
+    for (int i = 0; i < CL_ARRAY_LENGTH(caliParams.rightMag); i++)
+    {
+        caliParams.rightMag[i] = 2048;
+    }
 
     caliParams.leftTrigger[0] = 0;
     caliParams.leftTrigger[1] = 4096;
@@ -109,15 +105,11 @@ static void ToCaliMiddle(void)
 
 static void ToCaliMargin(void)
 {
-    caliParams.leftX[0] = UINT16_MAX;
-    caliParams.leftX[2] = 0;
-    caliParams.leftY[0] = UINT16_MAX;
-    caliParams.leftY[2] = 0;
+    for (int i = 0; i < CL_ARRAY_LENGTH(caliParams.leftMag); i++)
+        caliParams.leftMag[i] = 0;
 
-    caliParams.rightX[0] = UINT16_MAX;
-    caliParams.rightX[2] = 0;
-    caliParams.rightY[0] = UINT16_MAX;
-    caliParams.rightY[2] = 0;
+    for (int i = 0; i < CL_ARRAY_LENGTH(caliParams.rightMag); i++)
+        caliParams.rightMag[i] = 0;
 
     caliParams.leftTrigger[1] = 0;
     caliParams.rightTrigger[1] = 0;
@@ -240,18 +232,18 @@ static void MiddleProc(void)
                 diff.leftHall < MID_MAX_DIFF &&
                 diff.rightHall < MID_MAX_DIFF)
             {
-                caliParams.leftX[1] = (min.leftX + max.leftX) / 2;
-                caliParams.leftY[1] = (min.leftY + max.leftY) / 2;
-                caliParams.rightX[1] = (min.rightX + max.rightX) / 2;
-                caliParams.rightY[1] = (min.rightY + max.rightY) / 2;
+                caliParams.leftMidX = (min.leftX + max.leftX) / 2;
+                caliParams.leftMidY = (min.leftY + max.leftY) / 2;
+                caliParams.rightMidX = (min.rightX + max.rightX) / 2;
+                caliParams.rightMidY = (min.rightY + max.rightY) / 2;
                 caliParams.leftTrigger[0] = (min.leftHall + max.leftHall) / 2;
                 caliParams.rightTrigger[0] = (min.rightHall + max.rightHall) / 2;
 
                 CL_LOG_INFO("middle: %d, %d, %d, %d, %d, %d",
-                            caliParams.leftX[1],
-                            caliParams.leftY[1],
-                            caliParams.rightX[1],
-                            caliParams.rightY[1],
+                            caliParams.leftMidX,
+                            caliParams.leftMidY,
+                            caliParams.rightMidX,
+                            caliParams.rightMidY,
                             caliParams.leftTrigger[0],
                             caliParams.rightTrigger[0]);
                 ToCaliMargin();
@@ -262,21 +254,63 @@ static void MiddleProc(void)
 
 static void MarginProc(void)
 {
-    // 记录摇杆的最大最小值,扳机的最大值
-    caliParams.leftX[0] = CL_MIN(caliParams.leftX[0], GetAdcResult(AdcChan_LeftX));
-    caliParams.leftX[2] = CL_MAX(caliParams.leftX[2], GetAdcResult(AdcChan_LeftX));
+    const float magrinThreshold = 90000.0f;
+    // 摇杆记录30个角度的向量长度
+    Vector2 leftStick;
+    leftStick.x = GetAdcResult(AdcChan_LeftX);
+    leftStick.y = GetAdcResult(AdcChan_LeftY);
+    leftStick.x -= caliParams.leftMidX;
+    leftStick.y -= caliParams.leftMidY;
 
-    caliParams.leftY[0] = CL_MIN(caliParams.leftY[0], GetAdcResult(AdcChan_LeftY));
-    caliParams.leftY[2] = CL_MAX(caliParams.leftY[2], GetAdcResult(AdcChan_LeftY));
+    if (Vector2_SqrMagnitude(&leftStick) > magrinThreshold)
+    {
+        float rad = GetRadian(&leftStick);
+        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
+        int pos = roundf(rad);
+        if (FLOAT_NEAR(rad, pos, 0.1f))
+        {
+            pos %= CL_ARRAY_LENGTH(caliParams.leftMag);
 
-    caliParams.rightX[0] = CL_MIN(caliParams.rightX[0], GetAdcResult(AdcChan_RightX));
-    caliParams.rightX[2] = CL_MAX(caliParams.rightX[2], GetAdcResult(AdcChan_RightX));
+            caliParams.leftMag[pos] = Vector2_Magnitude(&leftStick);
+        }
+    }
 
-    caliParams.rightY[0] = CL_MIN(caliParams.rightY[0], GetAdcResult(AdcChan_RightY));
-    caliParams.rightY[2] = CL_MAX(caliParams.rightY[2], GetAdcResult(AdcChan_RightY));
+    Vector2 rightStick;
+    rightStick.x = GetAdcResult(AdcChan_RightX);
+    rightStick.y = GetAdcResult(AdcChan_RightY);
+    rightStick.x -= caliParams.rightMidX;
+    rightStick.y -= caliParams.rightMidY;
 
+    if (Vector2_SqrMagnitude(&rightStick) > magrinThreshold)
+    {
+        float rad = GetRadian(&rightStick);
+        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
+        int pos = roundf(rad);
+        if (FLOAT_NEAR(rad, pos, 0.1f))
+        {
+            pos %= CL_ARRAY_LENGTH(caliParams.rightMag);
+            caliParams.rightMag[pos] = Vector2_Magnitude(&rightStick);
+        }
+    }
+
+    // 记录扳机的最大值
     caliParams.leftTrigger[1] = CL_MAX(caliParams.leftTrigger[1], GetAdcResult(AdcChan_LeftHall));
     caliParams.rightTrigger[1] = CL_MAX(caliParams.rightTrigger[1], GetAdcResult(AdcChan_RightHall));
+
+    bool allFound = true;
+    for (int i = 0; i < CL_ARRAY_LENGTH(caliParams.leftMag); i++)
+    {
+        if (caliParams.leftMag[i] == 0 || caliParams.rightMag[i] == 0)
+        {
+            allFound = false;
+            break;
+        }
+    }
+
+    if (allFound)
+    { // 每个点都至少采集到数据了,设置为呼吸灯效果
+        SetPadLedStyle(PadLedStyle_Breath);
+    }
 }
 
 void Cali_Process(void)
@@ -299,3 +333,59 @@ CaliStatus_t GetCaliStatus(void)
     return caliStatus;
 }
 
+static float GetRadian(const Vector2 *v)
+{
+    Vector2 up = {.x = 0, .y = 1};
+    float rad = Vector2_Radian(v, &up);
+
+    if (v->x < 0)
+        rad = M_PI * 2 - rad;
+
+    return rad;
+}
+
+void StickCorrect(Vector2 *stick, bool left)
+{
+    if (left)
+    {
+        stick->x -= caliParams.leftMidX;
+        stick->y -= caliParams.leftMidY;
+
+        float rad = GetRadian(stick);
+        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
+
+        int before, next;
+        before = floorf(rad);
+        next = ceilf(rad);
+        float mag = (rad - before) * caliParams.leftMag[next % CL_ARRAY_LENGTH(caliParams.leftMag)] +
+                    (next - rad) * caliParams.leftMag[before];
+
+        float sMag = Vector2_Magnitude(stick);
+        if (sMag > mag)
+            mag = sMag + 1.0f;
+
+        stick->x = stick->x / mag * 32767.0f;
+        stick->y = stick->y / mag * 32767.0f;
+    }
+    else
+    {
+        stick->x -= caliParams.rightMidX;
+        stick->y -= caliParams.rightMidY;
+
+        float rad = GetRadian(stick);
+        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
+
+        int before, next;
+        before = floorf(rad);
+        next = ceilf(rad);
+        float mag = (rad - before) * caliParams.rightMag[next % CL_ARRAY_LENGTH(caliParams.rightMag)] +
+                    (next - rad) * caliParams.rightMag[before];
+
+        float sMag = Vector2_Magnitude(stick);
+        if (sMag > mag)
+            mag = sMag + 1.0f;
+
+        stick->x = stick->x / mag * 32767.0f;
+        stick->y = stick->y / mag * 32767.0f;
+    }
+}
