@@ -152,7 +152,7 @@ void PadFunc_Process(void)
 
             rightStick.x = GetAdcResult(AdcChan_RightX);
             rightStick.y = GetAdcResult(AdcChan_RightY);
-            StickCorrect(&leftStick, false);
+            StickCorrect(&rightStick, false);
 
             padReport.rightX = rightStick.x;
             padReport.rightY = rightStick.y;

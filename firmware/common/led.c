@@ -42,7 +42,7 @@ static void PadLed_Switch(uint8_t brightness)
 }
 
 //----------------pad led-----------------------------
-static PadLedStyle_t padLedStyle = PadLedStyle_On;
+static PadLedStyle_t padLedStyle = PadLedStyle_Off;
 static uint8_t padLedCurBn = 0;
 #define PAD_LED_MAX_BN (80)
 void PadLedProc(void)

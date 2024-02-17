@@ -262,7 +262,8 @@ static void MarginProc(void)
     leftStick.x -= caliParams.leftMidX;
     leftStick.y -= caliParams.leftMidY;
 
-    if (Vector2_SqrMagnitude(&leftStick) > magrinThreshold)
+    float sqrMag = Vector2_SqrMagnitude(&leftStick);
+    if (sqrMag > magrinThreshold)
     {
         float rad = GetRadian(&leftStick);
         rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
@@ -271,7 +272,8 @@ static void MarginProc(void)
         {
             pos %= CL_ARRAY_LENGTH(caliParams.leftMag);
 
-            caliParams.leftMag[pos] = Vector2_Magnitude(&leftStick);
+            if (sqrMag > caliParams.leftMag[pos] * caliParams.leftMag[pos])
+                caliParams.leftMag[pos] = sqrtf(sqrMag);
         }
     }
 
@@ -281,7 +283,8 @@ static void MarginProc(void)
     rightStick.x -= caliParams.rightMidX;
     rightStick.y -= caliParams.rightMidY;
 
-    if (Vector2_SqrMagnitude(&rightStick) > magrinThreshold)
+    sqrMag = Vector2_SqrMagnitude(&rightStick);
+    if (sqrMag > magrinThreshold)
     {
         float rad = GetRadian(&rightStick);
         rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
@@ -289,7 +292,9 @@ static void MarginProc(void)
         if (FLOAT_NEAR(rad, pos, 0.1f))
         {
             pos %= CL_ARRAY_LENGTH(caliParams.rightMag);
-            caliParams.rightMag[pos] = Vector2_Magnitude(&rightStick);
+
+            if (sqrMag > caliParams.rightMag[pos] * caliParams.rightMag[pos])
+                caliParams.rightMag[pos] = sqrtf(sqrMag);
         }
     }
 
@@ -336,8 +341,9 @@ CaliStatus_t GetCaliStatus(void)
 static float GetRadian(const Vector2 *v)
 {
     float cos = v->y / Vector2_Magnitude(v);
-    cos = CL_CLAMP(cos, -1.0f, 1.0f);
+    cos = CL_CLAMP(cos, -0.999999f, 0.999999f);
     float rad = acosf(cos);
+    rad = CL_CLAMP(rad, 0, M_PI);
 
     if (v->x < 0)
         rad = M_PI * 2 - rad;
@@ -354,6 +360,7 @@ void StickCorrect(Vector2 *stick, bool left)
 
         float rad = GetRadian(stick);
         rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
+        rad = CL_MIN(rad, 29.99f);
 
         int before, next;
         before = floorf(rad);
@@ -375,6 +382,7 @@ void StickCorrect(Vector2 *stick, bool left)
 
         float rad = GetRadian(stick);
         rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
+        rad = CL_MIN(rad, 29.99f);
 
         int before, next;
         before = floorf(rad);

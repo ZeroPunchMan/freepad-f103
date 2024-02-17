@@ -20,8 +20,8 @@ void SetMcuLedStyle(McuLedStyle_t style);
 
 typedef enum
 {
-    PadLedStyle_On,
     PadLedStyle_Off,
+    PadLedStyle_On,
     PadLedStyle_Blink,
     PadLedStyle_Breath,
 } PadLedStyle_t;

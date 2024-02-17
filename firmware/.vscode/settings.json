@@ -12,7 +12,7 @@
         "common/clib/.gitignore": true,
         "common/clib/Makefile": true,
         "common/mmlib/testcase": true,
-        // "app": true,
+        //"app": true,
         "boot": true,
     },
     "files.associations": {
