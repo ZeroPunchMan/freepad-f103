@@ -335,8 +335,9 @@ CaliStatus_t GetCaliStatus(void)
 
 static float GetRadian(const Vector2 *v)
 {
-    Vector2 up = {.x = 0, .y = 1};
-    float rad = Vector2_Radian(v, &up);
+    float cos = v->y / Vector2_Magnitude(v);
+    cos = CL_CLAMP(cos, -1.0f, 1.0f);
+    float rad = acosf(cos);
 
     if (v->x < 0)
         rad = M_PI * 2 - rad;
