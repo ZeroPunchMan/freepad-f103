@@ -312,6 +312,11 @@ static void MarginProc(void)
         }
     }
 
+    if (caliParams.leftTrigger[1] < caliParams.leftTrigger[0] + 500)
+        allFound = false;
+    if (caliParams.rightTrigger[1] < caliParams.rightTrigger[0] + 500)
+        allFound = false;
+
     if (allFound)
     { // 每个点都至少采集到数据了,设置为呼吸灯效果
         SetPadLedStyle(PadLedStyle_Breath);
