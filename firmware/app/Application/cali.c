@@ -348,7 +348,7 @@ static float GetRadian(const Vector2 *v)
     float cos = v->y / Vector2_Magnitude(v);
     cos = CL_CLAMP(cos, -1.0, 1.0f);
     float rad = acosf(cos);
-    rad = CL_CLAMP(rad, 0, M_PI);
+    // rad = CL_CLAMP(rad, 0, M_PI);
 
     if (v->x < 0)
         rad = M_PI * 2 - rad;
