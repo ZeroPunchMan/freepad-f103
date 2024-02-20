@@ -289,7 +289,7 @@ static void StickMarginProc(Vector2 *stick, bool left)
 
 static void MarginProc(void)
 {
-    // 摇杆记录30个角度的向量长度
+    // 摇杆记录60个角度的向量长度
     Vector2 leftStick;
     leftStick.x = GetAdcResult(AdcChan_LeftX);
     leftStick.y = GetAdcResult(AdcChan_LeftY);
@@ -396,6 +396,12 @@ void StickCorrect(Vector2 *stick, bool left)
     if (sMag > mag)
         mag = sMag + 1.0f;
 
-    stick->x = stick->x / mag * 32767.0f;
-    stick->y = stick->y / mag * 32767.0f;
+    stick->x = stick->x / mag * 1.05f;
+    stick->x = CL_CLAMP(stick->x, -1.0f, 1.0f);
+
+    stick->y = stick->y / mag * 1.05f;
+    stick->y = CL_CLAMP(stick->y, -1.0f, 1.0f);
+
+    stick->x = stick->x * 32767.0f;
+    stick->y = stick->y * 32767.0f;
 }

@@ -12,8 +12,8 @@ typedef enum
 
 typedef struct
 {
-    uint16_t leftMag[30], leftMidX, leftMidY;    // 30个角度长度; 中间值
-    uint16_t rightMag[30], rightMidX, rightMidY; // 30个角度长度; 中间值
+    uint16_t leftMag[60], leftMidX, leftMidY;    // 30个角度长度; 中间值
+    uint16_t rightMag[60], rightMidX, rightMidY; // 30个角度长度; 中间值
     uint16_t leftTrigger[2], rightTrigger[2];       // min,max
     uint32_t crc;
 } CaliParams_t;
