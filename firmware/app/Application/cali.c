@@ -252,51 +252,53 @@ static void MiddleProc(void)
     }
 }
 
-static void MarginProc(void)
+static void StickMarginProc(Vector2 *stick, bool left)
 {
     const float magrinThreshold = 90000.0f;
+
+    uint16_t *mags;
+    uint8_t len = CL_ARRAY_LENGTH(caliParams.leftMag);
+    if (left)
+    {
+        stick->x -= caliParams.leftMidX;
+        stick->y -= caliParams.leftMidY;
+        mags = caliParams.leftMag;
+    }
+    else
+    {
+        stick->x -= caliParams.rightMidX;
+        stick->y -= caliParams.rightMidY;
+        mags = caliParams.rightMag;
+    }
+
+    float sqrMag = Vector2_SqrMagnitude(stick);
+    if (sqrMag > magrinThreshold)
+    {
+        float rad = GetRadian(stick);
+        rad /= (M_PI * 2 / len);
+        int pos = roundf(rad);
+        if (FLOAT_NEAR(rad, pos, 0.1f))
+        {
+            pos %= len;
+
+            if (sqrMag > mags[pos] * mags[pos])
+                mags[pos] = sqrtf(sqrMag);
+        }
+    }
+}
+
+static void MarginProc(void)
+{
     // 摇杆记录30个角度的向量长度
     Vector2 leftStick;
     leftStick.x = GetAdcResult(AdcChan_LeftX);
     leftStick.y = GetAdcResult(AdcChan_LeftY);
-    leftStick.x -= caliParams.leftMidX;
-    leftStick.y -= caliParams.leftMidY;
-
-    float sqrMag = Vector2_SqrMagnitude(&leftStick);
-    if (sqrMag > magrinThreshold)
-    {
-        float rad = GetRadian(&leftStick);
-        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
-        int pos = roundf(rad);
-        if (FLOAT_NEAR(rad, pos, 0.1f))
-        {
-            pos %= CL_ARRAY_LENGTH(caliParams.leftMag);
-
-            if (sqrMag > caliParams.leftMag[pos] * caliParams.leftMag[pos])
-                caliParams.leftMag[pos] = sqrtf(sqrMag);
-        }
-    }
+    StickMarginProc(&leftStick, true);
 
     Vector2 rightStick;
     rightStick.x = GetAdcResult(AdcChan_RightX);
     rightStick.y = GetAdcResult(AdcChan_RightY);
-    rightStick.x -= caliParams.rightMidX;
-    rightStick.y -= caliParams.rightMidY;
-
-    sqrMag = Vector2_SqrMagnitude(&rightStick);
-    if (sqrMag > magrinThreshold)
-    {
-        float rad = GetRadian(&rightStick);
-        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
-        int pos = roundf(rad);
-        if (FLOAT_NEAR(rad, pos, 0.1f))
-        {
-            pos %= CL_ARRAY_LENGTH(caliParams.rightMag);
-
-            if (sqrMag > caliParams.rightMag[pos] * caliParams.rightMag[pos])
-                caliParams.rightMag[pos] = sqrtf(sqrMag);
-        }
-    }
+    StickMarginProc(&rightStick, false);
 
     // 记录扳机的最大值
     caliParams.leftTrigger[1] = CL_MAX(caliParams.leftTrigger[1], GetAdcResult(AdcChan_LeftHall));
@@ -358,64 +360,42 @@ static float GetRadian(const Vector2 *v)
 
 void StickCorrect(Vector2 *stick, bool left)
 {
+    uint16_t *caliMags;
+    uint8_t len = CL_ARRAY_LENGTH(caliParams.leftMag);
     if (left)
     {
         stick->x -= caliParams.leftMidX;
         stick->y -= caliParams.leftMidY;
-
-        float rad = GetRadian(stick);
-        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.leftMag));
-
-        int before, next;
-        before = floorf(rad);
-        next = ceilf(rad);
-
-        float mag;
-        if (before == next)
-        {
-            mag = caliParams.leftMag[before];
-        }
-        else
-        {
-            mag = (rad - before) * caliParams.leftMag[next % CL_ARRAY_LENGTH(caliParams.leftMag)] +
-                  (next - rad) * caliParams.leftMag[before];
-        }
-
-        float sMag = Vector2_Magnitude(stick);
-        if (sMag > mag)
-            mag = sMag + 1.0f;
-
-        stick->x = stick->x / mag * 32767.0f;
-        stick->y = stick->y / mag * 32767.0f;
+        caliMags = caliParams.leftMag;
     }
     else
     {
         stick->x -= caliParams.rightMidX;
         stick->y -= caliParams.rightMidY;
-
-        float rad = GetRadian(stick);
-        rad /= (M_PI * 2 / CL_ARRAY_LENGTH(caliParams.rightMag));
-
-        int before, next;
-        before = floorf(rad);
-        next = ceilf(rad);
-
-        float mag;
-        if (before == next)
-        {
-            mag = caliParams.rightMag[before];
-        }
-        else
-        {
-            mag = (rad - before) * caliParams.rightMag[next % CL_ARRAY_LENGTH(caliParams.rightMag)] +
-                  (next - rad) * caliParams.rightMag[before];
-        }
-
-        float sMag = Vector2_Magnitude(stick);
-        if (sMag > mag)
-            mag = sMag + 1.0f;
-
-        stick->x = stick->x / mag * 32767.0f;
-        stick->y = stick->y / mag * 32767.0f;
+        caliMags = caliParams.rightMag;
     }
+
+    float rad = GetRadian(stick);
+    rad /= (M_PI * 2 / len);
+
+    int before, next;
+    before = floorf(rad);
+    next = ceilf(rad);
+
+    float mag;
+    if (before == next)
+    {
+        mag = caliMags[before];
+    }
+    else
+    {
+        mag = (rad - before) * caliMags[next % len] + (next - rad) * caliMags[before];
+    }
+
+    float sMag = Vector2_Magnitude(stick);
+    if (sMag > mag)
+        mag = sMag + 1.0f;
+
+    stick->x = stick->x / mag * 32767.0f;
+    stick->y = stick->y / mag * 32767.0f;
 }
