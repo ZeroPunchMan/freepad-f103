@@ -385,11 +385,11 @@ void StickCorrect(Vector2 *stick, bool left)
     float mag;
     if (before == next)
     {
-        mag = caliMags[before];
+        mag = caliMags[before % len];
     }
     else
     {
-        mag = (rad - before) * caliMags[next % len] + (next - rad) * caliMags[before];
+        mag = (rad - before) * caliMags[next % len] + (next - rad) * caliMags[before % len];
     }
 
     float sMag = Vector2_Magnitude(stick);
