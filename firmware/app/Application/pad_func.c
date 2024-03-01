@@ -67,32 +67,6 @@ static inline bool IsButtonPressed(GPIO_TypeDef *port, uint32_t pin)
     return LL_GPIO_IsInputPinSet(port, pin);
 }
 
-// static int16_t StickAdcToHid(uint16_t adc, uint16_t min, uint16_t middle, uint16_t max)
-// { // int16_t
-//     if (adc < min)
-//     {
-//         return INT16_MIN;
-//     }
-//     else if (adc < middle)
-//     {
-//         float ratio = (float)(middle - adc) / (middle - min);
-//         // ratio = sqrt(ratio);
-//         // ratio = cbrt(ratio);
-//         return ratio * INT16_MIN;
-//     }
-//     else if (adc < max)
-//     {
-//         float ratio = (float)(adc - middle) / (max - middle);
-//         // ratio = sqrt(ratio);
-//         // ratio = cbrt(ratio);
-//         return ratio * INT16_MAX;
-//     }
-//     else
-//     {
-//         return INT16_MAX;
-//     }
-// }
-
 static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 { // uint8_t
     if (adc < min)
@@ -103,10 +77,10 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
     { // 平方根插值
         uint16_t total = max - min;
         float ratio = (float)(adc - min) / total;
-        if (ratio < 0.05f)
+        if (ratio < 0.025f)
             return 0;
 
-        ratio = sqrt(ratio);
+        ratio = sqrtf(ratio);
         return ratio * 255;
     }
     else
