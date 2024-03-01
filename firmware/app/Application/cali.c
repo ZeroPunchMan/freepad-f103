@@ -398,9 +398,13 @@ void StickCorrect(Vector2 *stick, bool left)
 
     stick->x = stick->x / mag * 1.05f;
     stick->x = CL_CLAMP(stick->x, -1.0f, 1.0f);
+    if (fabs(stick->x) < 0.08f)
+        stick->x = 0;
 
     stick->y = stick->y / mag * 1.05f;
     stick->y = CL_CLAMP(stick->y, -1.0f, 1.0f);
+    if (fabs(stick->y) < 0.08f)
+        stick->y = 0;
 
     stick->x = stick->x * 32767.0f;
     stick->y = stick->y * 32767.0f;

@@ -103,8 +103,10 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
     { // 平方根插值
         uint16_t total = max - min;
         float ratio = (float)(adc - min) / total;
+        if (ratio < 0.05f)
+            return 0;
+
         ratio = sqrt(ratio);
-        // ratio = cbrt(ratio);
         return ratio * 255;
     }
     else
