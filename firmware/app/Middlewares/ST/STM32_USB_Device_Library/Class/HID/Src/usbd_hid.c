@@ -401,7 +401,7 @@ void PadHidReportSerialize(uint8_t *buff, const PadReport_t *report)
 
 CL_Result_t USBD_SendPadReport(USBD_HandleTypeDef *pdev, const PadReport_t* report)
 {
-  USBD_HID_HandleTypeDef     *hhid = (USBD_HID_HandleTypeDef *)pdev->pClassData;
+  USBD_HID_HandleTypeDef *hhid = (USBD_HID_HandleTypeDef *)pdev->pClassData;
   if (pdev->dev_state == USBD_STATE_CONFIGURED)
   {
     if (hhid->state == HID_IDLE)
@@ -422,6 +422,17 @@ CL_Result_t USBD_SendPadReport(USBD_HandleTypeDef *pdev, const PadReport_t* repo
     }
   }
   return CL_ResFailed;
+}
+
+bool USBD_UploadIdle(USBD_HandleTypeDef *pdev)
+{
+  USBD_HID_HandleTypeDef *hhid = (USBD_HID_HandleTypeDef *)pdev->pClassData;
+  if (pdev->dev_state == USBD_STATE_CONFIGURED)
+  {
+    if (hhid->state == HID_IDLE)
+      return true;
+  }
+  return false;
 }
 
 

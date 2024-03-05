@@ -92,7 +92,7 @@ static uint8_t HallAdcToHid(uint16_t adc, uint16_t min, uint16_t max)
 void PadFunc_Process(void)
 {
     static uint32_t lastTime = 0;
-    if (SysTimeSpan(lastTime) >= 1)
+    if (USBD_UploadIdle(&hUsbDeviceFS) && SysTimeSpan(lastTime) >= 2)
     {
         lastTime = GetSysTime();
 

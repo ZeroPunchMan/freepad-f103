@@ -119,6 +119,7 @@ extern USBD_ClassTypeDef  USBD_HID;
 
 uint32_t USBD_HID_GetPollingInterval(USBD_HandleTypeDef *pdev);
 CL_Result_t USBD_SendPadReport(USBD_HandleTypeDef *pdev, const PadReport_t* report);
+bool USBD_UploadIdle(USBD_HandleTypeDef *pdev);
 
 /**
   * @}
