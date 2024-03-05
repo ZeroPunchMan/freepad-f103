@@ -361,8 +361,8 @@ static float GetRadian(const Vector2 *v)
 void StickCorrect(Vector2 *stick, bool left)
 {
     uint16_t *caliMags;
-    uint8_t len = CL_ARRAY_LENGTH(caliParams.leftMag); //边界值数组长度
-    //减去中心点值,获取不同角度的边界值数组
+    uint8_t len = CL_ARRAY_LENGTH(caliParams.leftMag); // 边界值数组长度
+    // 减去中心点值,获取不同角度的边界值数组
     if (left)
     {
         stick->x -= caliParams.leftMidX;
@@ -395,19 +395,19 @@ void StickCorrect(Vector2 *stick, bool left)
         mag = (rad - before) * caliMags[next % len] + (next - rad) * caliMags[before % len];
     }
 
-    float sMag = Vector2_Magnitude(stick);
-
-    // 计算x轴的值
-    stick->x = stick->x / mag;
-    if (fabs(stick->x) < 0.08f) // x死区
+    stick->x = stick->x / mag; // 计算x轴的值
+    stick->y = stick->y / mag; // 计算y轴的值
+    if ((stick->x * stick->x + stick->y * stick->y) < 0.007f)
+    { // 死区
         stick->x = 0;
-    stick->x = stick->x * 33000.0f;                     // 换算成USB协议值
-    stick->x = CL_CLAMP(stick->x, -32767.0f, 32767.0f); // x值范围限制
-
-    // 计算y轴的值
-    stick->y = stick->y / mag;
-    if (fabs(stick->y) < 0.08f) // y死区
         stick->y = 0;
-    stick->y = stick->y * 33000.0f;                     // 换算成USB协议值
-    stick->y = CL_CLAMP(stick->y, -32767.0f, 32767.0f); // y值范围限制
+    }
+    else
+    {
+        stick->x = stick->x * 33000.0f;                     // 换算成USB协议值
+        stick->x = CL_CLAMP(stick->x, -32767.0f, 32767.0f); // x值范围限制
+        
+        stick->y = stick->y * 33000.0f;                     // 换算成USB协议值
+        stick->y = CL_CLAMP(stick->y, -32767.0f, 32767.0f); // y值范围限制
+    }
 }
