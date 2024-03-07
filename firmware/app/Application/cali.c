@@ -376,9 +376,9 @@ void StickCorrect(Vector2 *stick, bool left)
         caliMags = caliParams.rightMag;
     }
 
-    Vector2 vecOld; // for test
-    vecOld.x = stick->x;
-    vecOld.y = stick->y;
+    // Vector2 vecOld; // for test
+    // vecOld.x = stick->x;
+    // vecOld.y = stick->y;
 
     // 计算得到弧度 0~2PI
     float rad = GetRadian(stick);
@@ -414,10 +414,10 @@ void StickCorrect(Vector2 *stick, bool left)
         stick->y = stick->y * 33000.0f;                     // 换算成USB协议值
         stick->y = CL_CLAMP(stick->y, -32767.0f, 32767.0f); // y值范围限制
 
-        float cos = Vector2_Cos(&vecOld, stick); // for test
-        if (cos < 0.939f)
-        {
-            SetPadLedStyle(PadLedStyle_Off);
-        }
+        // float cos = Vector2_Cos(&vecOld, stick); // for test
+        // if (cos < 0.939f)
+        // {
+        //     SetPadLedStyle(PadLedStyle_Off);
+        // }
     }
 }
